@@ -77,76 +77,90 @@ export default function Hero({ initialData }: { initialData?: any }) {
   return (
     <header className="relative min-h-[90vh] lg:min-h-screen flex items-center overflow-hidden bg-background" id="hero">
       
-      {/* === Subtle Background Glow Effect === */}
+      {/* === Background Glow Effects === */}
       <div className="absolute inset-0 z-0 pointer-events-none">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[120px]"></div>
-        <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-secondary/5 rounded-full blur-[100px]"></div>
+        {/* Primary glow behind the image area */}
+        <div className="absolute top-1/3 right-[10%] w-[600px] h-[600px] bg-primary/8 rounded-full blur-[150px]"></div>
+        {/* Secondary glow bottom-right */}
+        <div className="absolute bottom-[10%] right-[20%] w-[300px] h-[300px] bg-secondary/6 rounded-full blur-[100px]"></div>
+        {/* Subtle center glow */}
+        <div className="absolute top-1/2 left-1/3 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-primary/3 rounded-full blur-[120px]"></div>
       </div>
 
-      {/* === 2-Column Grid Container === */}
-      <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-8 w-full pt-28 pb-16 lg:py-0">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
+      {/* === Floating Hero Image (Desktop: absolute, Mobile: inline) === */}
+      <motion.div
+        initial={{ opacity: 0, x: 60, scale: 0.95 }}
+        animate={{ opacity: 1, x: 0, scale: 1 }}
+        transition={{ duration: 1, ease: "easeOut", delay: 0.2 }}
+        className="hidden lg:block absolute top-1/2 -translate-y-1/2 right-[-2%] xl:right-[0%] w-[55%] xl:w-[58%] z-[1] pointer-events-none"
+      >
+        <img 
+          alt="KeeTech Hero" 
+          className="w-full h-auto object-contain select-none drop-shadow-[0_0_60px_rgba(0,191,255,0.12)]" 
+          style={{ filter: "drop-shadow(0 0 80px rgba(0, 191, 255, 0.08)) drop-shadow(0 20px 60px rgba(0, 0, 0, 0.4))" }}
+          src={getImageUrl(hero.hero_image, defaultHero.hero_image)}
+        />
+      </motion.div>
 
-          {/* === Left Column: Text Content === */}
-          <motion.div 
-            variants={staggerContainer} 
-            initial="hidden"
-            animate="show" 
-            className="flex flex-col items-start text-left order-2 lg:order-1"
-          >
-            <motion.div variants={fadeUp} className="inline-flex items-center px-4 py-2 rounded-full border border-outline-variant bg-surface/30 backdrop-blur-md text-on-surface-variant text-xs sm:text-sm font-medium tracking-wide mb-6 gap-2">
-              <span className="w-2 h-2 rounded-full bg-secondary shadow-[0_0_8px_var(--color-secondary)]"></span>
-              {hero.hero_badge}
-            </motion.div>
-            
-            <motion.h1 variants={fadeUp} className="text-4xl sm:text-5xl lg:text-6xl font-bold text-on-background leading-[1.15] mb-6 sm:mb-8 tracking-tight">
-              {renderTitle(hero.hero_title)}
-            </motion.h1>
-            
-            <motion.p variants={fadeUp} className="text-on-surface-variant leading-relaxed max-w-lg mb-10 text-base sm:text-lg">
-              {hero.hero_description}
-            </motion.p>
-            
-            <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-              <a href={hero.hero_cta_primary_link} className="bg-gradient-primary text-background px-8 py-4 rounded-lg font-bold text-base sm:text-lg shadow-[0_4px_24px_rgba(0,191,255,0.3)] flex items-center justify-center gap-2 transition-transform hover:-translate-y-1">
-                {hero.hero_cta_primary_text}
-                <span className="material-symbols-outlined text-xl">arrow_forward</span>
-              </a>
-              <a href={hero.hero_cta_secondary_link} className="border border-outline hover:border-primary/50 text-on-background px-8 py-4 rounded-lg font-medium text-base sm:text-lg flex items-center justify-center gap-2 hover:bg-surface/50 backdrop-blur-sm transition-colors">
-                {hero.hero_cta_secondary_text}
-              </a>
-            </motion.div>
-            
-            <motion.div variants={fadeUp} className="flex flex-wrap items-center gap-3 sm:gap-5 text-xs sm:text-sm text-on-surface-variant mt-10 bg-surface/30 px-6 py-3 rounded-full backdrop-blur-md border border-outline-variant">
-              <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-secondary text-base">verified_user</span> Solusi Aman
-              </div>
-              <span className="text-outline hidden sm:block">•</span>
-              <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-secondary text-base">verified_user</span> Terpercaya
-              </div>
-              <span className="text-outline hidden sm:block">•</span>
-              <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-secondary text-base">verified_user</span> Profesional
-              </div>
-            </motion.div>
+      {/* === Text Content (Left Side) === */}
+      <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-8 w-full pt-28 pb-16 lg:pt-0 lg:pb-0">
+        <motion.div 
+          variants={staggerContainer} 
+          initial="hidden"
+          animate="show" 
+          className="max-w-xl lg:max-w-[520px] xl:max-w-[560px] flex flex-col items-start text-left"
+        >
+          <motion.div variants={fadeUp} className="inline-flex items-center px-4 py-2 rounded-full border border-outline-variant bg-surface/30 backdrop-blur-md text-on-surface-variant text-xs sm:text-sm font-medium tracking-wide mb-6 gap-2">
+            <span className="w-2 h-2 rounded-full bg-secondary shadow-[0_0_8px_var(--color-secondary)]"></span>
+            {hero.hero_badge}
           </motion.div>
-
-          {/* === Right Column: Hero Image === */}
-          <motion.div
-            initial={{ opacity: 0, x: 40 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut", delay: 0.3 }}
-            className="flex justify-center lg:justify-end items-center order-1 lg:order-2"
-          >
-            <img 
-              alt="KeeTech Hero" 
-              className="w-full max-w-[560px] lg:max-w-none h-auto object-contain drop-shadow-[0_0_40px_rgba(0,191,255,0.15)] select-none" 
-              src={getImageUrl(hero.hero_image, defaultHero.hero_image)}
-            />
+          
+          <motion.h1 variants={fadeUp} className="text-4xl sm:text-5xl lg:text-[3.5rem] xl:text-6xl font-bold text-on-background leading-[1.15] mb-6 sm:mb-8 tracking-tight">
+            {renderTitle(hero.hero_title)}
+          </motion.h1>
+          
+          <motion.p variants={fadeUp} className="text-on-surface-variant leading-relaxed max-w-lg mb-10 text-base sm:text-lg">
+            {hero.hero_description}
+          </motion.p>
+          
+          <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+            <a href={hero.hero_cta_primary_link} className="bg-gradient-primary text-background px-8 py-4 rounded-lg font-bold text-base sm:text-lg shadow-[0_4px_24px_rgba(0,191,255,0.3)] flex items-center justify-center gap-2 transition-transform hover:-translate-y-1">
+              {hero.hero_cta_primary_text}
+              <span className="material-symbols-outlined text-xl">arrow_forward</span>
+            </a>
+            <a href={hero.hero_cta_secondary_link} className="border border-outline hover:border-primary/50 text-on-background px-8 py-4 rounded-lg font-medium text-base sm:text-lg flex items-center justify-center gap-2 hover:bg-surface/50 backdrop-blur-sm transition-colors">
+              {hero.hero_cta_secondary_text}
+            </a>
           </motion.div>
+          
+          <motion.div variants={fadeUp} className="flex flex-wrap items-center gap-3 sm:gap-5 text-xs sm:text-sm text-on-surface-variant mt-10 bg-surface/30 px-6 py-3 rounded-full backdrop-blur-md border border-outline-variant">
+            <div className="flex items-center gap-2">
+              <span className="material-symbols-outlined text-secondary text-base">verified_user</span> Solusi Aman
+            </div>
+            <span className="text-outline hidden sm:block">•</span>
+            <div className="flex items-center gap-2">
+              <span className="material-symbols-outlined text-secondary text-base">verified_user</span> Terpercaya
+            </div>
+            <span className="text-outline hidden sm:block">•</span>
+            <div className="flex items-center gap-2">
+              <span className="material-symbols-outlined text-secondary text-base">verified_user</span> Profesional
+            </div>
+          </motion.div>
+        </motion.div>
 
-        </div>
+        {/* === Mobile-only Hero Image (inline, below text) === */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut", delay: 0.3 }}
+          className="lg:hidden mt-12 flex justify-center"
+        >
+          <img 
+            alt="KeeTech Hero" 
+            className="w-full max-w-[500px] h-auto object-contain select-none drop-shadow-[0_0_40px_rgba(0,191,255,0.12)]" 
+            src={getImageUrl(hero.hero_image, defaultHero.hero_image)}
+          />
+        </motion.div>
       </div>
       
     </header>
