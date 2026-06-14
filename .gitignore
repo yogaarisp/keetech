@@ -1,0 +1,49 @@
+/.env
+/.env.backup
+/.env.production
+/node_modules
+/vendor
+/.fleet
+/.idea
+/.nova
+/.phpunit.cache
+/.phpunit.result.cache
+/.vscode
+/.zed
+/auth.json
+.DS_Store
+
+# Public assets
+/public/build
+/public/hot
+/public/storage
+
+# Logs
+*.log
+
+# Server config
+/.htaccess
+/.user.ini
+/.well-known
+/backend/public/.well-known
+
+# Storage cache
+/backend/storage/framework/views/*.php
+/backend/storage/framework/cache/data/*
+/backend/storage/logs/*.log
+/backend/storage/pail
+
+# Backups
+/backend/public/storage_backup
+
+# Built assets
+/backend/public/build
+
+# SSL verification
+/backend/public/.well-known
+
+# Storage backups
+/backend/public/storage_backup
+
+# Symlink (jangan di-track sebagai file)
+/backend/public/storage
