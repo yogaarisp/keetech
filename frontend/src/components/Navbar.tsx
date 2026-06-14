@@ -33,7 +33,7 @@ export default function Navbar({ initialData }: { initialData?: any }) {
 
   return (
     <>
-      <nav className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-outline-variant">
+      <nav className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md">
         <div className="flex justify-between items-center px-4 md:px-8 py-4 max-w-7xl mx-auto">
           <motion.div 
             whileHover={{ scale: 1.05 }} 
