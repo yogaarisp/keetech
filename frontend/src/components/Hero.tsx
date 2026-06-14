@@ -92,7 +92,7 @@ export default function Hero({ initialData }: { initialData?: any }) {
         initial={{ opacity: 0, x: 60, scale: 0.95 }}
         animate={{ opacity: 1, x: 0, scale: 1 }}
         transition={{ duration: 1, ease: "easeOut", delay: 0.2 }}
-        className="hidden lg:block absolute top-1/2 -translate-y-1/2 right-[-2%] xl:right-[0%] w-[55%] xl:w-[58%] z-[1] pointer-events-none"
+        className="hidden lg:block absolute top-1/2 -translate-y-1/2 right-[-5%] xl:right-[-3%] w-[62%] xl:w-[68%] z-[1] pointer-events-none"
       >
         <img 
           alt="KeeTech Hero" 
@@ -103,12 +103,12 @@ export default function Hero({ initialData }: { initialData?: any }) {
       </motion.div>
 
       {/* === Text Content (Left Side) === */}
-      <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-8 w-full pt-28 pb-16 lg:pt-0 lg:pb-0">
+      <div className="relative z-10 w-full px-6 md:px-10 lg:px-12 xl:px-20 pt-28 pb-16 lg:pt-0 lg:pb-0">
         <motion.div 
           variants={staggerContainer} 
           initial="hidden"
           animate="show" 
-          className="max-w-xl lg:max-w-[520px] xl:max-w-[560px] flex flex-col items-start text-left"
+          className="max-w-xl lg:max-w-[600px] xl:max-w-[640px] flex flex-col items-start text-left"
         >
           <motion.div variants={fadeUp} className="inline-flex items-center px-4 py-2 rounded-full border border-outline-variant bg-surface/30 backdrop-blur-md text-on-surface-variant text-xs sm:text-sm font-medium tracking-wide mb-6 gap-2">
             <span className="w-2 h-2 rounded-full bg-secondary shadow-[0_0_8px_var(--color-secondary)]"></span>
