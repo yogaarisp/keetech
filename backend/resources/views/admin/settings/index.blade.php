@@ -192,9 +192,9 @@
 
                             {{-- Favicon --}}
                             <div class="space-y-4">
-                                <label class="block text-xs font-bold text-stone-500 uppercase tracking-wider">Site Favicon (Logo Tab)</label>
+                                <label class="block text-xs font-bold text-stone-500 uppercase tracking-wider">Site Favicon</label>
                                 <div class="drop-zone relative group cursor-pointer" data-target="company_favicon">
-                                    <input type="file" name="company_favicon" class="hidden file-input" accept="image/x-icon,image/png,image/jpeg">
+                                    <input type="file" name="company_favicon" class="hidden file-input" accept="image/x-icon,image/png">
                                     <div class="drop-zone-display border-2 border-dashed border-stone-200 dark:border-white/10 rounded-2xl p-6 transition-all flex flex-col items-center justify-center min-h-[120px] text-center bg-white dark:bg-slate-900">
                                         @php
                                             $favicon = \App\Models\SiteSetting::where('key', 'company_favicon')->first()?->value;
@@ -207,7 +207,7 @@
                                             </div>
                                         </div>
                                         <div class="drop-text {{ $faviconPreview ? 'hidden' : '' }} space-y-2">
-                                            <span class="material-symbols-outlined text-stone-400 text-3xl">public</span>
+                                            <span class="material-symbols-outlined text-stone-400 text-3xl">favicon</span>
                                             <p class="text-[10px] font-bold text-stone-500 uppercase">Tarik favicon kesini</p>
                                         </div>
                                     </div>

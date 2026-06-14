@@ -1,39 +1,31 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
 
 export async function getServices() {
-  try {
-    const res = await fetch(`${API_BASE_URL}/services`);
-    if (!res.ok) return [];
-    const json = await jsonPromise(res);
-    return json.data || [];
-  } catch { return []; }
+  const res = await fetch(`${API_BASE_URL}/services`, { next: { revalidate: 10 } });
+  if (!res.ok) return [];
+  const json = await jsonPromise(res);
+  return json.data || [];
 }
 
 export async function getPortfolios() {
-  try {
-    const res = await fetch(`${API_BASE_URL}/portfolios`);
-    if (!res.ok) return [];
-    const json = await jsonPromise(res);
-    return json.data || [];
-  } catch { return []; }
+  const res = await fetch(`${API_BASE_URL}/portfolios`, { next: { revalidate: 10 } });
+  if (!res.ok) return [];
+  const json = await jsonPromise(res);
+  return json.data || [];
 }
 
 export async function getTestimonials() {
-  try {
-    const res = await fetch(`${API_BASE_URL}/testimonials`);
-    if (!res.ok) return [];
-    const json = await jsonPromise(res);
-    return json.data || [];
-  } catch { return []; }
+  const res = await fetch(`${API_BASE_URL}/testimonials`, { next: { revalidate: 10 } });
+  if (!res.ok) return [];
+  const json = await jsonPromise(res);
+  return json.data || [];
 }
 
 export async function getSettings() {
-  try {
-    const res = await fetch(`${API_BASE_URL}/settings`);
-    if (!res.ok) return null;
-    const json = await jsonPromise(res);
-    return json.data || null;
-  } catch { return null; }
+  const res = await fetch(`${API_BASE_URL}/settings`, { next: { revalidate: 10 } });
+  if (!res.ok) return null;
+  const json = await jsonPromise(res);
+  return json.data || null;
 }
 
 export async function submitContact(data: any) {
@@ -53,4 +45,3 @@ async function jsonPromise(res: Response) {
     return {};
   }
 }
-

@@ -6,7 +6,7 @@ import { getSettings } from "@/lib/api";
 const defaultFooter = {
   companyName: "KeeTech",
   description: "Penyedia solusi IT komprehensif yang mengedepankan kualitas, transparansi, dan inovasi masa depan untuk bisnis Indonesia.",
-  copyright: "© 2026 KeeTech Professional IT Services. All rights reserved.",
+  copyright: "© 2024 KeeTech Professional IT Services. All rights reserved.",
   social: {
     instagram: "https://instagram.com/keetech",
     facebook: "https://facebook.com/keetech",
@@ -34,26 +34,28 @@ export default function Footer({ initialData }: { initialData?: any }) {
   });
 
   useEffect(() => {
-    async function fetchData() {
-      try {
-        const settings = await getSettings();
-        if (settings) {
-          setFooter({
-            companyName: settings.general?.company_name || defaultFooter.companyName,
-            description: settings.footer?.footer_description || settings.general?.company_description || defaultFooter.description,
-            copyright: settings.footer?.footer_copyright || defaultFooter.copyright,
-            social: {
-              instagram: settings.social?.social_instagram || defaultFooter.social.instagram,
-              facebook: settings.social?.social_facebook || defaultFooter.social.facebook,
-              linkedin: settings.social?.social_linkedin || defaultFooter.social.linkedin,
-              whatsapp: settings.social?.social_whatsapp || defaultFooter.social.whatsapp,
-            },
-          });
-        }
-      } catch (error) {}
+    if (!initialData) {
+      async function fetchData() {
+        try {
+          const settings = await getSettings();
+          if (settings) {
+            setFooter({
+              companyName: settings.general?.company_name || defaultFooter.companyName,
+              description: settings.footer?.footer_description || settings.general?.company_description || defaultFooter.description,
+              copyright: settings.footer?.footer_copyright || defaultFooter.copyright,
+              social: {
+                instagram: settings.social?.social_instagram || defaultFooter.social.instagram,
+                facebook: settings.social?.social_facebook || defaultFooter.social.facebook,
+                linkedin: settings.social?.social_linkedin || defaultFooter.social.linkedin,
+                whatsapp: settings.social?.social_whatsapp || defaultFooter.social.whatsapp,
+              },
+            });
+          }
+        } catch (error) {}
+      }
+      fetchData();
     }
-    fetchData();
-  }, []);
+  }, [initialData]);
 
   return (
     <footer className="bg-[#1A1A2E] dark:bg-[#0D0D1A] w-full pt-16 sm:pt-20 pb-8 sm:pb-10">

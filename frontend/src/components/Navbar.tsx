@@ -13,16 +13,18 @@ export default function Navbar({ initialData }: { initialData?: any }) {
     const handleHashChange = () => setActiveHash(window.location.hash);
     window.addEventListener("hashchange", handleHashChange);
     
-    async function fetchSettings() {
-      try {
-        const { getSettings } = await import("@/lib/api");
-        const settings = await getSettings();
-        if (settings?.general?.company_name) {
-          setCompanyName(settings.general.company_name);
-        }
-      } catch (e) {}
+    if (!initialData) {
+      async function fetchSettings() {
+        try {
+          const { getSettings } = await import("@/lib/api");
+          const settings = await getSettings();
+          if (settings?.general?.company_name) {
+            setCompanyName(settings.general.company_name);
+          }
+        } catch (e) {}
+      }
+      fetchSettings();
     }
-    fetchSettings();
 
     return () => window.removeEventListener("hashchange", handleHashChange);
   }, [initialData]);

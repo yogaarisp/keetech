@@ -32,16 +32,10 @@ class SettingController extends Controller
 
         // 1. Process File Uploads First (highest priority)
         foreach ($request->allFiles() as $key => $file) {
+            $path = $file->store('settings', 'public');
+            
             // Map keys like 'hero_image_file' to 'hero_image'
             $targetKey = str_ends_with($key, '_file') ? substr($key, 0, -5) : $key;
-            
-            // Delete old file if it exists to save storage space
-            $oldSetting = SiteSetting::where('key', $targetKey)->first();
-            if ($oldSetting && $oldSetting->value && \Illuminate\Support\Facades\Storage::disk('public')->exists($oldSetting->value)) {
-                \Illuminate\Support\Facades\Storage::disk('public')->delete($oldSetting->value);
-            }
-
-            $path = $file->store('settings', 'public');
             $finalData[$targetKey] = $path;
         }
 

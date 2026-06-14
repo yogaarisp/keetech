@@ -16,7 +16,6 @@ export async function generateMetadata(): Promise<Metadata> {
   const description = settings?.general?.company_description || "Penyedia layanan IT komprehensif.";
 
   return {
-    metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
     title: `${companyName} | ${tagline}`,
     description: description,
     openGraph: {

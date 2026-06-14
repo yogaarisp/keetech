@@ -77,37 +77,39 @@ export default function About({ initialData }: { initialData?: any }) {
   });
 
   useEffect(() => {
-    async function fetchData() {
-      try {
-        const settings = await getSettings();
-        if (settings?.stats) {
-          const s = settings.stats;
-          setStats([
-            { val: s.stat_clients || "50+", label: "Klien Aktif" },
-            { val: s.stat_projects || "200+", label: "Proyek Selesai" },
-            { val: s.stat_satisfaction || "99%", label: "Kepuasan Klien" },
-            { val: s.stat_support || "24/7", label: "Support Siaga" }
-          ]);
-        }
-        if (settings?.features) {
-          const f = settings.features;
-          setReasons([
-            { title: f.why_title_1 || defaultReasons[0].title, desc: f.why_desc_1 || defaultReasons[0].desc },
-            { title: f.why_title_2 || defaultReasons[1].title, desc: f.why_desc_2 || defaultReasons[1].desc },
-            { title: f.why_title_3 || defaultReasons[2].title, desc: f.why_desc_3 || defaultReasons[2].desc },
-          ]);
-        }
-        if (settings?.about) {
-          setAbout({
-            heading: settings.about.about_heading || defaultAbout.heading,
-            image: settings.about.about_image || defaultAbout.image,
-            experienceYears: settings.about.about_experience_years || defaultAbout.experienceYears,
-          });
-        }
-      } catch (error) {}
+    if (!initialData) {
+      async function fetchData() {
+        try {
+          const settings = await getSettings();
+          if (settings?.stats) {
+            const s = settings.stats;
+            setStats([
+              { val: s.stat_clients || "50+", label: "Klien Aktif" },
+              { val: s.stat_projects || "200+", label: "Proyek Selesai" },
+              { val: s.stat_satisfaction || "99%", label: "Kepuasan Klien" },
+              { val: s.stat_support || "24/7", label: "Support Siaga" }
+            ]);
+          }
+          if (settings?.features) {
+            const f = settings.features;
+            setReasons([
+              { title: f.why_title_1 || defaultReasons[0].title, desc: f.why_desc_1 || defaultReasons[0].desc },
+              { title: f.why_title_2 || defaultReasons[1].title, desc: f.why_desc_2 || defaultReasons[1].desc },
+              { title: f.why_title_3 || defaultReasons[2].title, desc: f.why_desc_3 || defaultReasons[2].desc },
+            ]);
+          }
+          if (settings?.about) {
+            setAbout({
+              heading: settings.about.about_heading || defaultAbout.heading,
+              image: settings.about.about_image || defaultAbout.image,
+              experienceYears: settings.about.about_experience_years || defaultAbout.experienceYears,
+            });
+          }
+        } catch (error) {}
+      }
+      fetchData();
     }
-    fetchData();
-  }, []);
+  }, [initialData]);
 
   return (
     <section className="py-20 md:py-24 bg-surface" id="tentang">

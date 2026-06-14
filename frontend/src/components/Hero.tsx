@@ -38,27 +38,31 @@ export default function Hero({ initialData }: { initialData?: any }) {
   const [hero, setHero] = useState(initialData || defaultHero);
 
   useEffect(() => {
-    async function fetchData() {
-      try {
-        const settings = await getSettings();
-        if (settings?.hero) {
-          setHero({
-            hero_badge: settings.hero.hero_badge || defaultHero.hero_badge,
-            hero_title: settings.hero.hero_title || defaultHero.hero_title,
-            hero_description: settings.hero.hero_description || defaultHero.hero_description,
-            hero_image: settings.hero.hero_image || defaultHero.hero_image,
-            hero_cta_primary_text: settings.hero.hero_cta_primary_text || defaultHero.hero_cta_primary_text,
-            hero_cta_primary_link: settings.hero.hero_cta_primary_link || defaultHero.hero_cta_primary_link,
-            hero_cta_secondary_text: settings.hero.hero_cta_secondary_text || defaultHero.hero_cta_secondary_text,
-            hero_cta_secondary_link: settings.hero.hero_cta_secondary_link || defaultHero.hero_cta_secondary_link,
-            hero_floating_title: settings.hero.hero_floating_title || defaultHero.hero_floating_title,
-            hero_floating_subtitle: settings.hero.hero_floating_subtitle || defaultHero.hero_floating_subtitle,
-          });
-        }
-      } catch (error) {}
+    // If we have initialData from server, we can skip the client-side fetch 
+    // or just use it to sync if needed. For Hero, server data is sufficient.
+    if (!initialData) {
+      async function fetchData() {
+        try {
+          const settings = await getSettings();
+          if (settings?.hero) {
+            setHero({
+              hero_badge: settings.hero.hero_badge || defaultHero.hero_badge,
+              hero_title: settings.hero.hero_title || defaultHero.hero_title,
+              hero_description: settings.hero.hero_description || defaultHero.hero_description,
+              hero_image: settings.hero.hero_image || defaultHero.hero_image,
+              hero_cta_primary_text: settings.hero.hero_cta_primary_text || defaultHero.hero_cta_primary_text,
+              hero_cta_primary_link: settings.hero.hero_cta_primary_link || defaultHero.hero_cta_primary_link,
+              hero_cta_secondary_text: settings.hero.hero_cta_secondary_text || defaultHero.hero_cta_secondary_text,
+              hero_cta_secondary_link: settings.hero.hero_cta_secondary_link || defaultHero.hero_cta_secondary_link,
+              hero_floating_title: settings.hero.hero_floating_title || defaultHero.hero_floating_title,
+              hero_floating_subtitle: settings.hero.hero_floating_subtitle || defaultHero.hero_floating_subtitle,
+            });
+          }
+        } catch (error) {}
+      }
+      fetchData();
     }
-    fetchData();
-  }, []);
+  }, [initialData]);
 
   // Parse title to handle <span> tags for styling
   const renderTitle = (title: string) => {

@@ -14,8 +14,6 @@ class SiteSettingSeeder extends Seeder
             ['key' => 'company_name', 'value' => 'KeeTech', 'group' => 'general'],
             ['key' => 'company_tagline', 'value' => 'Solusi Digital Terpadu untuk Bisnis Anda', 'group' => 'general'],
             ['key' => 'company_description', 'value' => 'Penyedia solusi IT komprehensif yang mengedepankan kualitas, transparansi, dan inovasi masa depan untuk bisnis Indonesia.', 'group' => 'general'],
-            ['key' => 'company_logo', 'value' => null, 'group' => 'general'],
-            ['key' => 'company_favicon', 'value' => null, 'group' => 'general'],
 
             // Hero Section
             ['key' => 'hero_badge', 'value' => '✦ IT SERVICE & SOFTWARE DEVELOPER PROFESIONAL ✦', 'group' => 'hero'],
@@ -63,18 +61,14 @@ class SiteSettingSeeder extends Seeder
 
             // Footer
             ['key' => 'footer_description', 'value' => 'Penyedia solusi IT komprehensif yang mengedepankan kualitas, transparansi, dan inovasi masa depan untuk bisnis Indonesia.', 'group' => 'footer'],
-            ['key' => 'footer_copyright', 'value' => '© 2026 KeeTech Professional IT Services. All rights reserved.', 'group' => 'footer'],
+            ['key' => 'footer_copyright', 'value' => '© 2024 KeeTech Professional IT Services. All rights reserved.', 'group' => 'footer'],
 
             // Webhook
             ['key' => 'n8n_webhook_url', 'value' => null, 'group' => 'webhook'],
         ];
 
         foreach ($settings as $setting) {
-            // Hanya buat jika key belum ada di database
-            // Ini mencegah data yang sudah Anda ubah di admin tertimpa kembali ke default
-            if (!SiteSetting::where('key', $setting['key'])->exists()) {
-                SiteSetting::create($setting);
-            }
+            SiteSetting::updateOrCreate(['key' => $setting['key']], $setting);
         }
     }
 }
