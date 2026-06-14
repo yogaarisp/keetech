@@ -92,12 +92,17 @@ export default function Hero({ initialData }: { initialData?: any }) {
         initial={{ opacity: 0, x: 60, scale: 0.95 }}
         animate={{ opacity: 1, x: 0, scale: 1 }}
         transition={{ duration: 1, ease: "easeOut", delay: 0.2 }}
-        className="hidden lg:block absolute top-1/2 -translate-y-1/2 right-[-5%] xl:right-[-3%] w-[62%] xl:w-[68%] z-[1] pointer-events-none"
+        className="hidden lg:block absolute top-1/2 -translate-y-1/2 right-[-6%] xl:right-[-4%] w-[65%] xl:w-[68%] z-[1] pointer-events-none"
       >
         <img 
           alt="KeeTech Hero" 
-          className="w-full h-auto object-contain select-none drop-shadow-[0_0_60px_rgba(0,191,255,0.12)]" 
-          style={{ filter: "drop-shadow(0 0 80px rgba(0, 191, 255, 0.08)) drop-shadow(0 20px 60px rgba(0, 0, 0, 0.4))" }}
+          className="w-full h-auto object-contain select-none mix-blend-lighten" 
+          style={{ 
+            // Menggunakan mask-image untuk memudarkan ujung kiri, atas, dan bawah gambar 
+            // sehingga menghilangkan garis batas kotak sama sekali.
+            WebkitMaskImage: 'radial-gradient(ellipse 90% 80% at 80% 50%, black 40%, transparent 100%)',
+            maskImage: 'radial-gradient(ellipse 90% 80% at 80% 50%, black 40%, transparent 100%)'
+          }}
           src={getImageUrl(hero.hero_image, defaultHero.hero_image)}
         />
       </motion.div>
@@ -157,7 +162,11 @@ export default function Hero({ initialData }: { initialData?: any }) {
         >
           <img 
             alt="KeeTech Hero" 
-            className="w-full max-w-[500px] h-auto object-contain select-none drop-shadow-[0_0_40px_rgba(0,191,255,0.12)]" 
+            className="w-full max-w-[500px] h-auto object-contain select-none mix-blend-lighten" 
+            style={{ 
+              WebkitMaskImage: 'radial-gradient(ellipse 90% 80% at 50% 50%, black 50%, transparent 100%)',
+              maskImage: 'radial-gradient(ellipse 90% 80% at 50% 50%, black 50%, transparent 100%)'
+            }}
             src={getImageUrl(hero.hero_image, defaultHero.hero_image)}
           />
         </motion.div>
