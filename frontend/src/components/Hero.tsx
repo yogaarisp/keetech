@@ -75,11 +75,11 @@ export default function Hero({ initialData }: { initialData?: any }) {
       <div className="absolute inset-0 z-0 pointer-events-none">
         <img 
           alt="KeeTech Hero" 
-          className="absolute top-1/2 -translate-y-1/2 right-0 w-[150%] md:w-[100%] lg:w-[75%] xl:w-[65%] h-auto max-h-[130vh] object-contain object-right" 
+          className="absolute top-1/2 -translate-y-1/2 right-0 w-[150%] md:w-[100%] lg:w-[75%] xl:w-[65%] h-auto max-h-[130vh] object-contain object-right mix-blend-lighten" 
           src={getImageUrl(hero.hero_image, defaultHero.hero_image)}
         />
         {/* Gradients to blend the image seamlessly into the #0A0E1A background */}
-        <div className="absolute inset-y-0 left-0 w-full lg:w-[55%] bg-gradient-to-r from-background via-background/95 to-transparent"></div>
+        <div className="absolute inset-y-0 left-0 w-full lg:w-[65%] bg-gradient-to-r from-background via-background via-35% to-transparent"></div>
         <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-background to-transparent"></div>
         <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-background via-background/50 to-transparent"></div>
       </div>
