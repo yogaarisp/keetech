@@ -1,0 +1,152 @@
+"use client";
+
+import { motion, Variants } from "framer-motion";
+import { useEffect, useState, useRef } from "react";
+import { getServices } from "@/lib/api";
+import { getImageUrl } from "@/lib/utils";
+
+const fadeUp: Variants = {
+  hidden: { opacity: 0, y: 30 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
+};
+
+const staggerContainer: Variants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.15
+    }
+  }
+};
+
+const placeholderServices = [
+  { icon: "desktop_windows", title: "IT Service", features: ["Hardware Repair", "Maintenance", "OS Installation"] },
+  { icon: "lan", title: "IT Infra", features: ["CCTV System", "Networking", "Server Setup"] },
+  { icon: "code", title: "IT Programmer", features: ["Web & App Dev", "SaaS Solution", "Custom Softwares"] },
+  { icon: "inventory_2", title: "Procurement", features: ["Hardware Supply", "Device Lifecycle", "IT Sourcing"] }
+];
+
+export default function Services({ initialData }: { initialData?: any[] }) {
+  const [services, setServices] = useState<any[]>(initialData && initialData.length > 0 ? initialData : []);
+  const [isLoading, setIsLoading] = useState(!initialData || initialData.length === 0);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!initialData || initialData.length === 0) {
+      async function fetchData() {
+        try {
+          const data = await getServices();
+          if (Array.isArray(data) && data.length > 0) {
+            setServices(data);
+          } else {
+            setServices(placeholderServices);
+          }
+        } catch (error) {
+          setServices(placeholderServices);
+        } finally {
+          setIsLoading(false);
+        }
+      }
+      fetchData();
+    }
+  }, [initialData]);
+
+  // Auto slide every 10 seconds for mobile
+  useEffect(() => {
+    if (isLoading || services.length <= 1) return;
+
+    const interval = setInterval(() => {
+      if (window.innerWidth >= 640) return; // Only auto-slide on mobile
+
+      const nextIndex = (activeIndex + 1) % services.length;
+      scrollToIndex(nextIndex);
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, [activeIndex, isLoading, services.length]);
+
+  const scrollToIndex = (index: number) => {
+    if (scrollRef.current) {
+      const container = scrollRef.current;
+      const cardWidth = container.offsetWidth * 0.80; // matching w-[80vw]
+      const gap = 24; // gap-6
+      container.scrollTo({
+        left: index * (cardWidth + gap),
+        behavior: 'smooth'
+      });
+      setActiveIndex(index);
+    }
+  };
+
+  const handleScroll = () => {
+    if (scrollRef.current && window.innerWidth < 640) {
+      const container = scrollRef.current;
+      const cardWidth = container.offsetWidth * 0.80;
+      const gap = 24;
+      const newIndex = Math.round(container.scrollLeft / (cardWidth + gap));
+      if (newIndex !== activeIndex) {
+        setActiveIndex(newIndex);
+      }
+    }
+  };
+
+  return (
+    <section className="py-20 md:py-24 bg-surface-container-low" id="layanan">
+      <div className="max-w-7xl mx-auto px-4 sm:px-8">
+        <div className="text-center mb-12 sm:mb-16">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black mb-4 tracking-tight">Layanan Kami</h2>
+          <p className="text-on-surface-variant max-w-2xl mx-auto text-sm sm:text-base px-2">
+            Kami menghadirkan spektrum layanan IT yang luas untuk mendukung transformasi digital bisnis Anda secara menyeluruh.
+          </p>
+        </div>
+        
+        {isLoading ? (
+          <div className="flex justify-center py-20">
+            <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        ) : (
+          <div className="relative">
+            <div 
+              ref={scrollRef}
+              onScroll={handleScroll}
+              className="flex sm:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 overflow-x-auto pb-8 sm:pb-0 snap-x snap-mandatory hide-scrollbar scroll-smooth"
+            >
+              {services.map((service, idx) => (
+                <div 
+                  key={service.id || idx} 
+                  className="flex-none w-[80vw] sm:w-auto bg-surface-container-lowest p-6 sm:p-8 rounded-3xl shadow-sm border border-outline-variant/10 group hover:-translate-y-2 transition-all duration-300 snap-center"
+                >
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 bg-primary-fixed rounded-2xl flex items-center justify-center text-primary mb-6 group-hover:bg-primary-container group-hover:text-on-primary transition-colors">
+                    <span className="material-symbols-outlined text-2xl sm:text-3xl">{service.icon}</span>
+                  </div>
+                  <h3 className="text-lg sm:text-xl font-bold mb-4">{service.title}</h3>
+                  <ul className="space-y-3 text-on-surface-variant text-sm">
+                    {(Array.isArray(service.features) ? service.features : []).map((feature: string, fIdx: number) => (
+                      <li key={fIdx} className="flex items-center gap-2">
+                        <span className="material-symbols-outlined text-sm text-secondary">check_circle</span> {feature}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+
+            {/* Dots for mobile */}
+            <div className="flex justify-center gap-2 mt-4 sm:hidden">
+              {services.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => scrollToIndex(i)}
+                  className={`w-2 h-2 rounded-full transition-all duration-300 ${activeIndex === i ? 'w-6 bg-primary' : 'bg-outline-variant'}`}
+                  aria-label={`Go to slide ${i + 1}`}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
