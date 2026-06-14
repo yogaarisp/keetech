@@ -3,85 +3,139 @@
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 
+const NAV_H = 68; // px — single source of truth for navbar height
+
 export default function Navbar({ initialData }: { initialData?: any }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeHash, setActiveHash] = useState("");
-  const [companyName, setCompanyName] = useState(initialData?.general?.company_name || "KEETECH");
+  const [companyName, setCompanyName] = useState(
+    initialData?.general?.company_name || "KeeTech"
+  );
 
   useEffect(() => {
-    setActiveHash(window.location.hash);
-    const handleHashChange = () => setActiveHash(window.location.hash);
-    window.addEventListener("hashchange", handleHashChange);
-    
+    setActiveHash(window.location.hash || "#beranda");
+    const onHash = () => setActiveHash(window.location.hash || "#beranda");
+    window.addEventListener("hashchange", onHash);
+
     if (!initialData) {
-      async function fetchSettings() {
+      (async () => {
         try {
           const { getSettings } = await import("@/lib/api");
-          const settings = await getSettings();
-          if (settings?.general?.company_name) {
-            setCompanyName(settings.general.company_name);
-          }
-        } catch (e) {}
-      }
-      fetchSettings();
+          const s = await getSettings();
+          if (s?.general?.company_name) setCompanyName(s.general.company_name);
+        } catch {}
+      })();
     }
-
-    return () => window.removeEventListener("hashchange", handleHashChange);
+    return () => window.removeEventListener("hashchange", onHash);
   }, [initialData]);
 
-  const menuItems = ["Beranda", "Layanan", "Tentang Kami", "Portofolio", "Kontak"];
+  const links = [
+    { label: "Beranda",     hash: "#beranda" },
+    { label: "Layanan",     hash: "#layanan" },
+    { label: "Tentang Kami",hash: "#tentangkami" },
+    { label: "Portofolio",  hash: "#portofolio" },
+    { label: "Kontak",      hash: "#kontak" },
+  ];
 
   return (
     <>
-      <nav className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md">
-        <div className="flex justify-between items-center px-4 md:px-8 py-4 max-w-7xl mx-auto">
-          <motion.div 
-            whileHover={{ scale: 1.05 }} 
-            className="text-2xl font-black text-on-background tracking-tighter cursor-pointer flex items-center gap-2"
-            onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); window.location.hash = ''; }}
+      {/* ── NAVBAR ── */}
+      <nav
+        className="fixed top-0 left-0 w-full z-50"
+        style={{
+          height: NAV_H,
+          background: "rgba(6,9,20,0.92)",
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)",
+          borderBottom: "1px solid rgba(255,255,255,0.05)",
+        }}
+      >
+        <div
+          className="flex items-center justify-between h-full w-full"
+          style={{ padding: "0 40px" }}
+        >
+          {/* Logo */}
+          <motion.div
+            whileHover={{ scale: 1.04 }}
+            className="flex items-center gap-2.5 cursor-pointer select-none"
+            onClick={() => {
+              window.scrollTo({ top: 0, behavior: "smooth" });
+              setActiveHash("#beranda");
+            }}
           >
-            {/* Minimalist Logo Icon representation */}
-            <div className="w-8 h-8 rounded-lg bg-gradient-primary flex items-center justify-center text-background font-black text-lg">
+            <div
+              className="flex items-center justify-center font-black text-[#060914] text-lg"
+              style={{
+                width: 36, height: 36,
+                borderRadius: 10,
+                background: "linear-gradient(135deg,#00BFFF,#32CD32)",
+                boxShadow: "0 0 14px rgba(0,191,255,0.45)",
+                flexShrink: 0,
+              }}
+            >
               K
             </div>
-            {companyName}
+            <span className="text-xl font-black text-white tracking-tight">
+              Kee<span style={{
+                background: "linear-gradient(90deg,#00BFFF,#32CD32)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+              }}>Tech</span>
+            </span>
           </motion.div>
-          
+
+          {/* Desktop nav links */}
           <div className="hidden md:flex items-center gap-8">
-            {menuItems.map((tab) => {
-              const tabHash = tab === "Beranda" ? "" : `#${tab.toLowerCase().replace(" ", "")}`;
-              const isActive = activeHash === tabHash || (tab === "Beranda" && activeHash === "#");
-              
+            {links.map(({ label, hash }) => {
+              const active = activeHash === hash;
               return (
-                <a 
-                  key={tab}
-                  href={tab === "Beranda" ? "#" : tabHash}
-                  className={`relative pb-1 font-semibold tracking-tight transition-colors duration-300 ${
-                    isActive ? "text-primary" : "text-on-surface-variant hover:text-on-background"
-                  }`}
-                  onClick={() => setActiveHash(tabHash)}
+                <a
+                  key={hash}
+                  href={hash}
+                  onClick={() => setActiveHash(hash)}
+                  className="relative pb-[3px] text-sm font-medium transition-colors duration-200"
+                  style={{ color: active ? "#00BFFF" : "rgba(255,255,255,0.68)" }}
+                  onMouseEnter={e => { if (!active) e.currentTarget.style.color = "#fff"; }}
+                  onMouseLeave={e => { if (!active) e.currentTarget.style.color = "rgba(255,255,255,0.68)"; }}
                 >
-                  {tab}
-                  {isActive && (
-                    <motion.div
-                      layoutId="nav-underline"
-                      className="absolute bottom-0 left-0 right-0 h-[2px] bg-primary"
-                      transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                  {label}
+                  {active && (
+                    <motion.span
+                      layoutId="nav-line"
+                      className="absolute bottom-0 left-0 right-0"
+                      style={{ height: 2, background: "#00BFFF", borderRadius: 2 }}
+                      transition={{ type: "spring", stiffness: 380, damping: 36 }}
                     />
                   )}
                 </a>
               );
             })}
           </div>
-          
-          <a href="#kontak" className="hidden md:flex bg-gradient-primary text-background px-6 py-2.5 rounded-full font-bold hover:opacity-90 transition-all duration-300 scale-95 active:scale-90 items-center gap-1 shadow-[0_0_15px_rgba(0,191,255,0.2)]">
-            Konsultasi Gratis <span className="material-symbols-outlined text-sm">arrow_forward</span>
+
+          {/* CTA button */}
+          <a
+            href="#kontak"
+            className="hidden md:inline-flex items-center gap-1.5 font-bold text-sm transition-all"
+            style={{
+              padding: "10px 22px",
+              borderRadius: 999,
+              color: "#060914",
+              background: "linear-gradient(90deg,#00BFFF,#32CD32)",
+              boxShadow: "0 0 18px rgba(0,191,255,0.35)",
+            }}
+            onMouseEnter={e => { e.currentTarget.style.boxShadow = "0 0 28px rgba(0,191,255,0.55)"; }}
+            onMouseLeave={e => { e.currentTarget.style.boxShadow = "0 0 18px rgba(0,191,255,0.35)"; }}
+          >
+            Konsultasi Gratis
+            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>arrow_forward</span>
           </a>
 
-          <button 
-            className="md:hidden text-on-background p-2"
+          {/* Mobile burger */}
+          <button
+            className="md:hidden text-white p-2"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            aria-label="Toggle Menu"
+            aria-label="Toggle menu"
           >
             <span className="material-symbols-outlined text-3xl">
               {isMenuOpen ? "close" : "menu"}
@@ -90,26 +144,38 @@ export default function Navbar({ initialData }: { initialData?: any }) {
         </div>
       </nav>
 
+      {/* ── MOBILE MENU ── */}
       {isMenuOpen && (
-        <motion.div 
-          initial={{ opacity: 0, y: -20 }}
+        <motion.div
+          initial={{ opacity: 0, y: -16 }}
           animate={{ opacity: 1, y: 0 }}
-          className="fixed top-[72px] left-0 w-full min-h-screen bg-surface/95 backdrop-blur-xl z-40 md:hidden flex flex-col px-6 pt-8 pb-32 border-t border-outline-variant shadow-2xl"
+          className="fixed left-0 w-full z-40 md:hidden flex flex-col"
+          style={{
+            top: NAV_H,
+            minHeight: `calc(100vh - ${NAV_H}px)`,
+            background: "rgba(6,9,20,0.97)",
+            backdropFilter: "blur(16px)",
+            padding: "32px 24px 48px",
+            borderTop: "1px solid rgba(255,255,255,0.06)",
+          }}
         >
-          <div className="flex flex-col gap-6">
-            {menuItems.map((tab) => (
-              <a 
-                key={tab}
-                className="text-2xl font-bold text-on-background hover:text-primary border-b border-outline-variant pb-4" 
-                href={tab === "Beranda" ? "#" : `#${tab.toLowerCase().replace(" ", "")}`}
-                onClick={() => setIsMenuOpen(false)}
+          <div className="flex flex-col gap-1 mb-10">
+            {links.map(({ label, hash }) => (
+              <a
+                key={hash}
+                href={hash}
+                className="text-xl font-bold text-white py-4 border-b"
+                style={{ borderColor: "rgba(255,255,255,0.06)" }}
+                onClick={() => { setIsMenuOpen(false); setActiveHash(hash); }}
               >
-                {tab}
+                {label}
               </a>
             ))}
           </div>
-          <a href="#kontak"
-            className="bg-gradient-primary text-background text-center w-full py-4 mt-12 rounded-2xl font-bold text-lg shadow-[0_4px_24px_rgba(0,191,255,0.3)]" 
+          <a
+            href="#kontak"
+            className="text-center font-bold text-base text-[#060914] py-4 rounded-2xl"
+            style={{ background: "linear-gradient(90deg,#00BFFF,#32CD32)" }}
             onClick={() => setIsMenuOpen(false)}
           >
             Konsultasi Gratis
@@ -120,3 +186,5 @@ export default function Navbar({ initialData }: { initialData?: any }) {
   );
 }
 
+// Export navbar height so Hero can consume it
+export { NAV_H };
