@@ -51,7 +51,7 @@ export default function Hero({ initialData }: { initialData?: any }) {
               hero_cta_secondary_link: settings.hero.hero_cta_secondary_link || defaultHero.hero_cta_secondary_link,
             });
           }
-        } catch (error) {}
+        } catch (error) { }
       }
       fetchData();
     }
@@ -87,92 +87,80 @@ export default function Hero({ initialData }: { initialData?: any }) {
         <div className="absolute top-1/2 left-1/3 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-primary/3 rounded-full blur-[120px]"></div>
       </div>
 
-      {/* === Floating Hero Image (Desktop: absolute, Mobile: inline) === */}
-      <motion.div
-        initial={{ opacity: 0, x: 60, scale: 0.95 }}
-        animate={{ opacity: 1, x: 0, scale: 1 }}
-        transition={{ duration: 1, ease: "easeOut", delay: 0.2 }}
-        className="hidden lg:block absolute top-1/2 -translate-y-1/2 right-[-6%] xl:right-[-4%] w-[65%] xl:w-[68%] z-[1] pointer-events-none"
-      >
-        <img 
-          alt="KeeTech Hero" 
-          className="w-full h-auto object-contain select-none mix-blend-lighten" 
-          style={{ 
-            // Menggunakan mask-image untuk memudarkan ujung kiri, atas, dan bawah gambar 
-            // sehingga menghilangkan garis batas kotak sama sekali.
-            WebkitMaskImage: 'radial-gradient(ellipse 90% 80% at 80% 50%, black 40%, transparent 100%)',
-            maskImage: 'radial-gradient(ellipse 90% 80% at 80% 50%, black 40%, transparent 100%)'
-          }}
-          src={getImageUrl(hero.hero_image, defaultHero.hero_image)}
-        />
-      </motion.div>
+      {/* === Grid Layout Container === */}
+      <div className="relative z-10 w-full max-w-[1600px] mx-auto px-6 md:px-10 lg:px-12 xl:px-20 pt-28 pb-16 lg:pt-0 lg:pb-0">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center">
+          
+          {/* === Left Column: Text Content === */}
+          <div className="lg:col-span-5 xl:col-span-5 order-2 lg:order-1">
+            <motion.div 
+              variants={staggerContainer} 
+              initial="hidden"
+              animate="show" 
+              className="flex flex-col items-start text-left"
+            >
+              <motion.div variants={fadeUp} className="inline-flex items-center px-4 py-2 rounded-full border border-outline-variant bg-surface/30 backdrop-blur-md text-on-surface-variant text-xs sm:text-sm font-medium tracking-wide mb-6 gap-2">
+                <span className="w-2 h-2 rounded-full bg-secondary shadow-[0_0_8px_var(--color-secondary)]"></span>
+                {hero.hero_badge}
+              </motion.div>
+              
+              <motion.h1 variants={fadeUp} className="text-4xl sm:text-5xl lg:text-[3.5rem] xl:text-6xl font-bold text-on-background leading-[1.15] mb-6 sm:mb-8 tracking-tight">
+                {renderTitle(hero.hero_title)}
+              </motion.h1>
+              
+              <motion.p variants={fadeUp} className="text-on-surface-variant leading-relaxed max-w-lg mb-10 text-base sm:text-lg">
+                {hero.hero_description}
+              </motion.p>
+              
+              <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+                <a href={hero.hero_cta_primary_link} className="bg-gradient-primary text-background px-8 py-4 rounded-lg font-bold text-base sm:text-lg shadow-[0_4px_24px_rgba(0,191,255,0.3)] flex items-center justify-center gap-2 transition-transform hover:-translate-y-1">
+                  {hero.hero_cta_primary_text}
+                  <span className="material-symbols-outlined text-xl">arrow_forward</span>
+                </a>
+                <a href={hero.hero_cta_secondary_link} className="border border-outline hover:border-primary/50 text-on-background px-8 py-4 rounded-lg font-medium text-base sm:text-lg flex items-center justify-center gap-2 hover:bg-surface/50 backdrop-blur-sm transition-colors">
+                  {hero.hero_cta_secondary_text}
+                </a>
+              </motion.div>
+              
+              <motion.div variants={fadeUp} className="flex flex-wrap items-center gap-3 sm:gap-5 text-xs sm:text-sm text-on-surface-variant mt-10 bg-surface/30 px-6 py-3 rounded-full backdrop-blur-md border border-outline-variant">
+                <div className="flex items-center gap-2">
+                  <span className="material-symbols-outlined text-secondary text-base">verified_user</span> Solusi Aman
+                </div>
+                <span className="text-outline hidden sm:block">•</span>
+                <div className="flex items-center gap-2">
+                  <span className="material-symbols-outlined text-secondary text-base">verified_user</span> Terpercaya
+                </div>
+                <span className="text-outline hidden sm:block">•</span>
+                <div className="flex items-center gap-2">
+                  <span className="material-symbols-outlined text-secondary text-base">verified_user</span> Profesional
+                </div>
+              </motion.div>
+            </motion.div>
+          </div>
 
-      {/* === Text Content (Left Side) === */}
-      <div className="relative z-10 w-full px-6 md:px-10 lg:px-12 xl:px-20 pt-28 pb-16 lg:pt-0 lg:pb-0">
-        <motion.div 
-          variants={staggerContainer} 
-          initial="hidden"
-          animate="show" 
-          className="max-w-xl lg:max-w-[600px] xl:max-w-[640px] flex flex-col items-start text-left"
-        >
-          <motion.div variants={fadeUp} className="inline-flex items-center px-4 py-2 rounded-full border border-outline-variant bg-surface/30 backdrop-blur-md text-on-surface-variant text-xs sm:text-sm font-medium tracking-wide mb-6 gap-2">
-            <span className="w-2 h-2 rounded-full bg-secondary shadow-[0_0_8px_var(--color-secondary)]"></span>
-            {hero.hero_badge}
-          </motion.div>
-          
-          <motion.h1 variants={fadeUp} className="text-4xl sm:text-5xl lg:text-[3.5rem] xl:text-6xl font-bold text-on-background leading-[1.15] mb-6 sm:mb-8 tracking-tight">
-            {renderTitle(hero.hero_title)}
-          </motion.h1>
-          
-          <motion.p variants={fadeUp} className="text-on-surface-variant leading-relaxed max-w-lg mb-10 text-base sm:text-lg">
-            {hero.hero_description}
-          </motion.p>
-          
-          <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-            <a href={hero.hero_cta_primary_link} className="bg-gradient-primary text-background px-8 py-4 rounded-lg font-bold text-base sm:text-lg shadow-[0_4px_24px_rgba(0,191,255,0.3)] flex items-center justify-center gap-2 transition-transform hover:-translate-y-1">
-              {hero.hero_cta_primary_text}
-              <span className="material-symbols-outlined text-xl">arrow_forward</span>
-            </a>
-            <a href={hero.hero_cta_secondary_link} className="border border-outline hover:border-primary/50 text-on-background px-8 py-4 rounded-lg font-medium text-base sm:text-lg flex items-center justify-center gap-2 hover:bg-surface/50 backdrop-blur-sm transition-colors">
-              {hero.hero_cta_secondary_text}
-            </a>
-          </motion.div>
-          
-          <motion.div variants={fadeUp} className="flex flex-wrap items-center gap-3 sm:gap-5 text-xs sm:text-sm text-on-surface-variant mt-10 bg-surface/30 px-6 py-3 rounded-full backdrop-blur-md border border-outline-variant">
-            <div className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-secondary text-base">verified_user</span> Solusi Aman
-            </div>
-            <span className="text-outline hidden sm:block">•</span>
-            <div className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-secondary text-base">verified_user</span> Terpercaya
-            </div>
-            <span className="text-outline hidden sm:block">•</span>
-            <div className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-secondary text-base">verified_user</span> Profesional
-            </div>
-          </motion.div>
-        </motion.div>
+          {/* === Right Column: Hero Image === */}
+          <div className="lg:col-span-7 xl:col-span-7 order-1 lg:order-2 flex justify-center lg:justify-end">
+            <motion.div
+              initial={{ opacity: 0, x: 60, scale: 0.95 }}
+              animate={{ opacity: 1, x: 0, scale: 1 }}
+              transition={{ duration: 1, ease: "easeOut", delay: 0.2 }}
+              className="w-full max-w-[600px] lg:max-w-[750px] xl:max-w-[850px] lg:translate-x-8 xl:translate-x-12"
+            >
+              <img 
+                alt="KeeTech Hero" 
+                className="w-full h-auto object-contain select-none mix-blend-lighten" 
+                style={{ 
+                  WebkitMaskImage: 'radial-gradient(ellipse 90% 80% at 80% 50%, black 40%, transparent 100%)',
+                  maskImage: 'radial-gradient(ellipse 90% 80% at 80% 50%, black 40%, transparent 100%)'
+                }}
+                src={getImageUrl(hero.hero_image, defaultHero.hero_image)}
+              />
+            </motion.div>
+          </div>
 
-        {/* === Mobile-only Hero Image (inline, below text) === */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut", delay: 0.3 }}
-          className="lg:hidden mt-12 flex justify-center"
-        >
-          <img 
-            alt="KeeTech Hero" 
-            className="w-full max-w-[500px] h-auto object-contain select-none mix-blend-lighten" 
-            style={{ 
-              WebkitMaskImage: 'radial-gradient(ellipse 90% 80% at 50% 50%, black 50%, transparent 100%)',
-              maskImage: 'radial-gradient(ellipse 90% 80% at 50% 50%, black 50%, transparent 100%)'
-            }}
-            src={getImageUrl(hero.hero_image, defaultHero.hero_image)}
-          />
-        </motion.div>
+        </div>
       </div>
       
     </header>
   );
 }
-
