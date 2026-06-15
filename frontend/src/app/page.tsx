@@ -1,5 +1,4 @@
 import { Metadata } from "next";
-import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import Services from "@/components/Services";
 import About from "@/components/About";
@@ -73,9 +72,8 @@ export default async function Page() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <Navbar initialData={settings} />
       <main>
-        <Hero initialData={settings?.hero} />
+        <Hero initialData={settings} />
         <Services initialData={services} />
         <About initialData={settings} />
         <Portfolio initialData={portfolios} />

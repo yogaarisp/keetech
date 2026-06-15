@@ -1,30 +1,26 @@
-"use client";
+﻿"use client";
 
 import { motion, Variants } from "framer-motion";
 import { useEffect, useState, useRef } from "react";
 import { getServices } from "@/lib/api";
-import { getImageUrl } from "@/lib/utils";
+import { SectionShell, SectionBadge, GradientText } from "@/components/SectionBackground";
+import { BG, CYAN, GRADIENT, TEAL, TEXT_MUTED, BORDER_SUBTLE, CARD_BG } from "@/lib/theme";
 
 const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 30 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
+  hidden: { opacity: 0, y: 24 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
 };
 
 const staggerContainer: Variants = {
   hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.15
-    }
-  }
+  show: { opacity: 1, transition: { staggerChildren: 0.12 } },
 };
 
 const placeholderServices = [
   { icon: "desktop_windows", title: "IT Service", features: ["Hardware Repair", "Maintenance", "OS Installation"] },
   { icon: "lan", title: "IT Infra", features: ["CCTV System", "Networking", "Server Setup"] },
   { icon: "code", title: "IT Programmer", features: ["Web & App Dev", "SaaS Solution", "Custom Softwares"] },
-  { icon: "inventory_2", title: "Procurement", features: ["Hardware Supply", "Device Lifecycle", "IT Sourcing"] }
+  { icon: "inventory_2", title: "Procurement", features: ["Hardware Supply", "Device Lifecycle", "IT Sourcing"] },
 ];
 
 export default function Services({ initialData }: { initialData?: any[] }) {
@@ -43,7 +39,7 @@ export default function Services({ initialData }: { initialData?: any[] }) {
           } else {
             setServices(placeholderServices);
           }
-        } catch (error) {
+        } catch {
           setServices(placeholderServices);
         } finally {
           setIsLoading(false);
@@ -58,9 +54,7 @@ export default function Services({ initialData }: { initialData?: any[] }) {
 
     const interval = setInterval(() => {
       if (window.innerWidth >= 640) return;
-
-      const nextIndex = (activeIndex + 1) % services.length;
-      scrollToIndex(nextIndex);
+      scrollToIndex((activeIndex + 1) % services.length);
     }, 10000);
 
     return () => clearInterval(interval);
@@ -69,12 +63,9 @@ export default function Services({ initialData }: { initialData?: any[] }) {
   const scrollToIndex = (index: number) => {
     if (scrollRef.current) {
       const container = scrollRef.current;
-      const cardWidth = container.offsetWidth * 0.80;
+      const cardWidth = container.offsetWidth * 0.8;
       const gap = 24;
-      container.scrollTo({
-        left: index * (cardWidth + gap),
-        behavior: 'smooth'
-      });
+      container.scrollTo({ left: index * (cardWidth + gap), behavior: "smooth" });
       setActiveIndex(index);
     }
   };
@@ -82,94 +73,127 @@ export default function Services({ initialData }: { initialData?: any[] }) {
   const handleScroll = () => {
     if (scrollRef.current && window.innerWidth < 640) {
       const container = scrollRef.current;
-      const cardWidth = container.offsetWidth * 0.80;
+      const cardWidth = container.offsetWidth * 0.8;
       const gap = 24;
       const newIndex = Math.round(container.scrollLeft / (cardWidth + gap));
-      if (newIndex !== activeIndex) {
-        setActiveIndex(newIndex);
-      }
+      if (newIndex !== activeIndex) setActiveIndex(newIndex);
     }
   };
 
   return (
-    <section className="py-20 md:py-24 relative overflow-hidden" id="layanan">
-      {/* Background gradient for better contrast */}
-      <div className="absolute inset-0 bg-gradient-to-b from-background via-[#0D1220] to-background"></div>
-      
-      <div className="max-w-7xl mx-auto px-4 sm:px-8 relative z-10">
-        <div className="text-center mb-12 sm:mb-16">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black mb-4 tracking-tight bg-gradient-to-r from-[#19ABCD] to-[#129E92] bg-clip-text text-transparent">
-            Layanan Kami
-          </h2>
-          <p className="text-gray-400 max-w-2xl mx-auto text-sm sm:text-base px-2">
-            Kami menghadirkan spektrum layanan IT yang luas untuk mendukung transformasi digital bisnis Anda secara menyeluruh.
-          </p>
-        </div>
-        
-        {isLoading ? (
-          <div className="flex justify-center py-20">
-            <div className="w-12 h-12 border-4 border-[#19ABCD] border-t-transparent rounded-full animate-spin"></div>
-          </div>
-        ) : (
-          <div className="relative">
-            <div 
-              ref={scrollRef}
-              onScroll={handleScroll}
-              className="flex sm:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 overflow-x-auto pb-8 sm:pb-0 snap-x snap-mandatory hide-scrollbar scroll-smooth"
-            >
-              {services.map((service, idx) => (
-                <motion.div 
-                  key={service.id || idx}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: idx * 0.1 }}
-                  viewport={{ once: true }}
-                  className="flex-none w-[80vw] sm:w-auto group relative"
-                >
-                  {/* Glow effect behind card */}
-                  <div className="absolute -inset-1 bg-gradient-to-r from-[#19ABCD]/20 via-[#129E92]/20 to-[#19ABCD]/20 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                  
-                  {/* Glassmorphism Card */}
-                  <div className="relative p-6 sm:p-8 rounded-3xl backdrop-blur-xl bg-white/[0.03] border border-white/[0.08] group-hover:border-[#19ABCD]/40 transition-all duration-500 hover:-translate-y-2 shadow-xl hover:shadow-[#19ABCD]/10">
-                    {/* Icon Container */}
-                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#19ABCD]/20 to-[#129E92]/20 flex items-center justify-center mb-6 group-hover:from-[#19ABCD]/30 group-hover:to-[#129E92]/30 transition-all duration-300 border border-[#19ABCD]/20 group-hover:border-[#19ABCD]/40">
-                      <span className="material-symbols-outlined text-3xl text-[#19ABCD] group-hover:text-[#129E92] transition-colors">{service.icon}</span>
-                    </div>
-                    
-                    {/* Title with accent line */}
-                    <div className="mb-6">
-                      <div className="w-8 h-1 bg-gradient-to-r from-[#19ABCD] to-[#129E92] rounded-full mb-4 group-hover:w-12 transition-all duration-300"></div>
-                      <h3 className="text-xl sm:text-2xl font-bold text-white group-hover:text-[#19ABCD] transition-colors">{service.title}</h3>
-                    </div>
-                    
-                    {/* Features List */}
-                    <ul className="space-y-3">
-                      {(Array.isArray(service.features) ? service.features : []).map((feature: string, fIdx: number) => (
-                        <li key={fIdx} className="flex items-center gap-3 text-gray-400 group-hover:text-gray-300 transition-colors">
-                          <span className="material-symbols-outlined text-lg text-[#129E92]">check_circle</span> 
-                          <span className="text-sm">{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
+    <SectionShell id="layanan" glow="right">
+      <motion.div
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, margin: "-80px" }}
+        variants={staggerContainer}
+        className="mb-12 text-center sm:mb-16"
+      >
+        <motion.div variants={fadeUp} className="flex justify-center">
+          <SectionBadge>Layanan Profesional</SectionBadge>
+        </motion.div>
+        <motion.h2
+          variants={fadeUp}
+          className="mb-4 text-3xl font-black tracking-tight text-white sm:text-4xl lg:text-5xl"
+        >
+          <GradientText>Layanan</GradientText> Kami
+        </motion.h2>
+        <motion.p
+          variants={fadeUp}
+          className="mx-auto max-w-2xl px-2 text-sm sm:text-base"
+          style={{ color: TEXT_MUTED }}
+        >
+          Kami menghadirkan spektrum layanan IT yang luas untuk mendukung transformasi digital bisnis Anda secara menyeluruh.
+        </motion.p>
+      </motion.div>
 
-            {/* Dots for mobile */}
-            <div className="flex justify-center gap-2 mt-4 sm:hidden">
-              {services.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => scrollToIndex(i)}
-                  className={`h-2 rounded-full transition-all duration-300 ${activeIndex === i ? 'w-6 bg-gradient-to-r from-[#19ABCD] to-[#129E92]' : 'w-2 bg-white/20'}`}
-                  aria-label={`Go to slide ${i + 1}`}
-                />
-              ))}
-            </div>
+      {isLoading ? (
+        <div className="flex justify-center py-20">
+          <div
+            className="h-12 w-12 animate-spin rounded-full border-4 border-t-transparent"
+            style={{ borderColor: CYAN, borderTopColor: "transparent" }}
+          />
+        </div>
+      ) : (
+        <div className="relative">
+          <div
+            ref={scrollRef}
+            onScroll={handleScroll}
+            className="hide-scrollbar flex snap-x snap-mandatory scroll-smooth gap-6 overflow-x-auto pb-8 sm:grid sm:grid-cols-2 sm:overflow-visible sm:pb-0 lg:grid-cols-4"
+          >
+            {services.map((service, idx) => (
+              <div
+                key={service.id || idx}
+                className="group flex-none snap-center sm:w-auto"
+                style={{ width: "80vw" }}
+              >
+                <div
+                  className="h-full rounded-2xl p-6 transition-all duration-300 sm:p-8 group-hover:-translate-y-1"
+                  style={{
+                    background: CARD_BG,
+                    border: `1px solid ${BORDER_SUBTLE}`,
+                    boxShadow: "0 0 0 0 rgba(0,229,255,0)",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = "rgba(0,229,255,0.25)";
+                    e.currentTarget.style.boxShadow = "0 8px 32px rgba(0,229,255,0.08)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = BORDER_SUBTLE;
+                    e.currentTarget.style.boxShadow = "0 0 0 0 rgba(0,229,255,0)";
+                  }}
+                >
+                  <div
+                    className="mb-6 flex h-12 w-12 items-center justify-center rounded-xl sm:h-14 sm:w-14"
+                    style={{
+                      background: GRADIENT,
+                      boxShadow: "0 0 20px rgba(0,229,255,0.3)",
+                    }}
+                  >
+                    <span
+                      className="material-symbols-outlined text-2xl sm:text-3xl"
+                      style={{ color: BG }}
+                    >
+                      {service.icon}
+                    </span>
+                  </div>
+                  <h3 className="mb-4 text-lg font-bold text-white sm:text-xl">{service.title}</h3>
+                  <ul className="space-y-3 text-sm" style={{ color: TEXT_MUTED }}>
+                    {(Array.isArray(service.features) ? service.features : []).map(
+                      (feature: string, fIdx: number) => (
+                        <li key={fIdx} className="flex items-center gap-2">
+                          <span
+                            className="material-symbols-outlined text-sm"
+                            style={{ color: TEAL }}
+                          >
+                            check_circle
+                          </span>
+                          {feature}
+                        </li>
+                      )
+                    )}
+                  </ul>
+                </div>
+              </div>
+            ))}
           </div>
-        )}
-      </div>
-    </section>
+
+          <div className="mt-4 flex justify-center gap-2 sm:hidden">
+            {services.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => scrollToIndex(i)}
+                className="h-2 rounded-full transition-all duration-300"
+                style={{
+                  width: activeIndex === i ? 24 : 8,
+                  background: activeIndex === i ? CYAN : "rgba(255,255,255,0.15)",
+                }}
+                aria-label={`Go to slide ${i + 1}`}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+    </SectionShell>
   );
 }

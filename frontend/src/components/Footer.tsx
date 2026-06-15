@@ -71,7 +71,7 @@ export default function Footer({ initialData }: { initialData?: any }) {
           <ul className="space-y-3 sm:space-y-4 text-sm">
             <li><a className="text-slate-400 hover:text-white transition-colors hover:translate-x-1 inline-block" href="#">Beranda</a></li>
             <li><a className="text-slate-400 hover:text-white transition-colors hover:translate-x-1 inline-block" href="#layanan">Layanan</a></li>
-            <li><a className="text-slate-400 hover:text-white transition-colors hover:translate-x-1 inline-block" href="#tentang">Tentang</a></li>
+            <li><a className="text-slate-400 hover:text-white transition-colors hover:translate-x-1 inline-block" href="#tentangkami">Tentang</a></li>
             <li><a className="text-slate-400 hover:text-white transition-colors hover:translate-x-1 inline-block" href="#portofolio">Portofolio</a></li>
           </ul>
         </div>

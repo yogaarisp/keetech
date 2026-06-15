@@ -1,83 +1,521 @@
-"use client";
-import { motion } from "framer-motion";
+﻿"use client";
+
+import { motion, Variants } from "framer-motion";
+import { useEffect, useState } from "react";
+import { getSettings } from "@/lib/api";
+import { getImageUrl } from "@/lib/utils";
+
+const NAV_H = 72;
+const NAV_H_FLOAT = 58;
+const SCROLL_THRESHOLD = 80;
+const GRADIENT = "linear-gradient(90deg, #00E5FF 0%, #26FF5C 100%)";
+const BG = "#040B12";
+const BG_RGB = "4, 11, 18";
+
+const fadeUp: Variants = {
+  hidden: { opacity: 1, y: 14 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
+};
+const stagger: Variants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.09 } },
+};
+
+const defaultHero = {
+  hero_badge: "IT SERVICE & SOFTWARE DEVELOPER PROFESIONAL",
+  hero_title: "Solusi Digital<br/><span>Terpadu</span><br/>untuk Bisnis Anda",
+  hero_description:
+    "Kami menyediakan layanan IT lengkap ΓÇö mulai dari perbaikan hardware, infrastruktur jaringan, hingga pengembangan software dan pengadaan perangkat IT.",
+  hero_image:
+    "https://keetech.my.id/storage/settings/o3TGJ3jMXm1q39V267yDKHcYp5XrWISqvqWPCJ4L.png",
+  hero_cta_primary_text: "Konsultasi Gratis",
+  hero_cta_primary_link: "#kontak",
+  hero_cta_secondary_text: "Lihat Layanan",
+  hero_cta_secondary_link: "#layanan",
+};
+
+const navLinks = [
+  { label: "Beranda", hash: "#beranda" },
+  { label: "Layanan", hash: "#layanan" },
+  { label: "Tentang Kami", hash: "#tentangkami" },
+  { label: "Portofolio", hash: "#portofolio" },
+  { label: "Kontak", hash: "#kontak" },
+];
+
+function mergeHero(data?: Partial<typeof defaultHero>) {
+  const merged = { ...defaultHero, ...(data || {}) };
+  merged.hero_title = normalizeTitle(merged.hero_title);
+  return merged;
+}
+
+function normalizeTitle(title: string) {
+  if (title.includes("<br")) return title;
+  if (title.includes("<span>")) {
+    return title
+      .replace(/<span>/i, "<br/><span>")
+      .replace(/<\/span>/i, "</span><br/>")
+      .replace(/<br\/>\s*$/, "");
+  }
+  return title;
+}
+
+function GradientText({ children }: { children: React.ReactNode }) {
+  return (
+    <span
+      style={{
+        background: GRADIENT,
+        WebkitBackgroundClip: "text",
+        WebkitTextFillColor: "transparent",
+        backgroundClip: "text",
+      }}
+    >
+      {children}
+    </span>
+  );
+}
+
+function RenderTitle({ raw }: { raw: string }) {
+  const parts = raw.split(/(<span>.*?<\/span>|<br\s*\/?>)/i);
+  return (
+    <>
+      {parts.map((p, i) => {
+        if (p.toLowerCase().startsWith("<span>"))
+          return (
+            <GradientText key={i}>{p.replace(/<\/?span>/gi, "")}</GradientText>
+          );
+        if (p.toLowerCase().startsWith("<br")) return <br key={i} />;
+        if (p) return <span key={i}>{p}</span>;
+        return null;
+      })}
+    </>
+  );
+}
+
+function HeroBackground({ imageSrc }: { imageSrc: string }) {
+  return (
+    <>
+      {/* Scene laptop ΓÇö background kanan, menyatu dengan header */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 overflow-hidden"
+        style={{ background: BG }}
+      >
+        <img
+          src={imageSrc}
+          alt=""
+          className="absolute top-1/2 -translate-y-1/2 select-none object-contain object-right
+            right-[-8%] h-[72%] w-auto min-w-[95%] max-w-none opacity-70
+            sm:right-[-4%] sm:h-[80%] sm:min-w-[80%] sm:opacity-85
+            lg:right-0 lg:h-[108%] lg:min-w-[58%] lg:max-w-[76%] lg:opacity-100"
+        />
+        {/* Gradasi kiri ΓÇö transisi halus ke area teks */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background: `linear-gradient(102deg,
+              ${BG} 0%,
+              ${BG} 26%,
+              rgba(${BG_RGB}, 0.98) 36%,
+              rgba(${BG_RGB}, 0.72) 48%,
+              rgba(${BG_RGB}, 0.28) 60%,
+              transparent 76%)`,
+          }}
+        />
+      </div>
+
+      {/* Dot grid ΓÇö satu pola di seluruh header + hero */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{
+          backgroundImage:
+            "radial-gradient(circle, rgba(0,190,255,0.13) 1px, transparent 1px)",
+          backgroundSize: "26px 26px",
+        }}
+      />
+
+      {/* Glow cyan ΓÇö match atmosfer gambar laptop */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div
+          style={{
+            position: "absolute",
+            width: "55%",
+            height: "85%",
+            top: "-5%",
+            right: "-5%",
+            background:
+              "radial-gradient(ellipse at 65% 45%, rgba(0,229,255,0.12) 0%, transparent 62%)",
+          }}
+        />
+        <div
+          style={{
+            position: "absolute",
+            width: "35%",
+            height: "45%",
+            bottom: 0,
+            right: "8%",
+            background:
+              "radial-gradient(ellipse at bottom, rgba(0,229,255,0.08) 0%, transparent 70%)",
+          }}
+        />
+      </div>
+    </>
+  );
+}
 
 export default function Hero({ initialData }: { initialData?: any }) {
-  const settings = initialData || {};
+  const [hero, setHero] = useState(() => mergeHero(initialData?.hero));
+  const [companyName, setCompanyName] = useState(
+    initialData?.general?.company_name || "KeeTech"
+  );
+  const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [activeHash, setActiveHash] = useState("#beranda");
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > SCROLL_THRESHOLD);
+    const onHash = () => setActiveHash(window.location.hash || "#beranda");
+
+    onScroll();
+    onHash();
+    setMounted(true);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("hashchange", onHash);
+
+    if (!initialData) {
+      (async () => {
+        try {
+          const s = await getSettings();
+          if (s?.hero) setHero(mergeHero(s.hero));
+          if (s?.general?.company_name) setCompanyName(s.general.company_name);
+        } catch {}
+      })();
+    }
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("hashchange", onHash);
+    };
+  }, [initialData]);
 
   return (
-    <section className="relative min-h-screen w-full flex items-center bg-black overflow-hidden pt-20">
-      <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ backgroundImage: "radial-gradient(#00BFFF 1px, transparent 1px)", backgroundSize: "32px 32px" }} />
-      <div className="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] bg-[#00BFFF]/10 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-[-10%] left-[-10%] w-[400px] h-[400px] bg-[#32CD32]/10 blur-[100px] rounded-full pointer-events-none" />
+    <>
+      {/* ΓöÇΓöÇ Unified header + hero ΓÇö satu canvas ΓöÇΓöÇ */}
+      <section
+        id="beranda"
+        className="relative w-full overflow-hidden"
+        style={{ background: BG }}
+      >
+        <HeroBackground
+          imageSrc={getImageUrl(hero.hero_image, defaultHero.hero_image)}
+        />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-        
-        <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }}>
-          <div className="inline-block px-4 py-1.5 mb-6 border border-[#00BFFF]/30 bg-[#00BFFF]/5 rounded-full">
-            <span className="text-[10px] font-bold text-[#00BFFF] tracking-[0.2em] uppercase">IT Service and Software Developer Profesional</span>
-          </div>
-
-          <h1 className="text-5xl lg:text-7xl font-black text-white leading-[1.1] mb-6 tracking-tight">
-            Solusi Digital <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00BFFF] to-[#32CD32]">Terpadu</span> untuk Bisnis Anda
-          </h1>
-          
-          <p className="text-gray-400 text-lg mb-10 max-w-lg leading-relaxed">
-            {settings.hero_description || "Kami menyediakan layanan IT lengkap mulai dari hardware repair, infrastruktur jaringan, hingga pengembangan software kustom."}
-          </p>
-          
-          <div className="flex flex-wrap gap-4 mb-12">
-            <a href="#kontak" className="px-8 py-4 rounded-xl font-bold text-black bg-gradient-to-r from-[#00BFFF] to-[#32CD32] shadow-[0_0_20px_rgba(0,191,255,0.3)] hover:scale-105 transition-all">
-              KONSULTASI GRATIS
-            </a>
-            <a href="#layanan" className="px-8 py-4 rounded-xl font-bold text-white border border-white/10 bg-white/5 backdrop-blur-md hover:bg-white/10 transition-all">
-              LIHAT LAYANAN
-            </a>
-          </div>
-
-          <div className="flex items-center gap-6">
-            {["Solusi Aman", "Terpercaya", "Profesional"].map((item) => (
-              <div key={item} className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-[#32CD32] text-sm">verified_user</span>
-                <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">{item}</span>
+        {/* Navbar ΓÇö transparan di atas, jadi floating pill saat scroll */}
+        <header
+          className="fixed left-0 right-0 z-50 flex justify-center transition-[padding] duration-500 ease-out"
+          style={{
+            top: 0,
+            padding: scrolled ? "14px 20px 0" : "0",
+          }}
+        >
+          <motion.div
+            layout
+            className="relative flex w-full items-center"
+            initial={false}
+            animate={{
+              maxWidth: scrolled ? 920 : 1440,
+              height: scrolled ? NAV_H_FLOAT : NAV_H,
+              borderRadius: scrolled ? 999 : 0,
+            }}
+            transition={{ duration: 0.48, ease: [0.22, 1, 0.36, 1] }}
+            style={{
+              padding: scrolled ? "0 22px" : "0 clamp(24px, 4vw, 56px)",
+              background: scrolled ? `rgba(${BG_RGB}, 0.78)` : "transparent",
+              backdropFilter: scrolled ? "blur(20px) saturate(1.4)" : "none",
+              WebkitBackdropFilter: scrolled ? "blur(20px) saturate(1.4)" : "none",
+              border: scrolled
+                ? "1px solid rgba(255,255,255,0.1)"
+                : "1px solid transparent",
+              boxShadow: scrolled
+                ? "0 10px 40px rgba(0,0,0,0.42), 0 0 0 1px rgba(255,255,255,0.04), inset 0 1px 0 rgba(255,255,255,0.06)"
+                : "none",
+            }}
+          >
+            <motion.a
+              href="#beranda"
+              className="z-10 flex items-center gap-2.5"
+              onClick={() => setActiveHash("#beranda")}
+              animate={{ scale: scrolled ? 0.94 : 1 }}
+              transition={{ duration: 0.35 }}
+            >
+              <div
+                className="flex shrink-0 items-center justify-center rounded-full font-black text-white"
+                style={{
+                  width: scrolled ? 32 : 36,
+                  height: scrolled ? 32 : 36,
+                  background: GRADIENT,
+                  boxShadow: scrolled
+                    ? "0 0 12px rgba(0,229,255,0.35)"
+                    : "0 0 16px rgba(0,229,255,0.5)",
+                  fontSize: scrolled ? "0.9rem" : "1rem",
+                  transition: "all 0.35s ease",
+                }}
+              >
+                K
               </div>
-            ))}
-          </div>
-        </motion.div>
+              <span
+                className="font-black tracking-tight text-white"
+                style={{
+                  fontSize: scrolled ? "1.05rem" : "1.15rem",
+                  transition: "font-size 0.35s ease",
+                }}
+              >
+                {companyName}
+              </span>
+            </motion.a>
 
-        <div className="relative flex justify-center items-center">
-          <motion.img 
-            initial={{ opacity: 0, scale: 0.8 }} 
-            animate={{ opacity: 1, scale: 1 }} 
-            transition={{ duration: 1 }}
-            src={settings.hero_image || "https://keetech.my.id/storage/settings/o3TGJ3jMXm1q39V267yDKHcYp5XrWISqvqWPCJ4L.png"} 
-            alt="Laptop" 
-            className="w-full max-w-2xl z-10 relative"
-          />
+            <nav className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-8 md:flex">
+              {navLinks.map(({ label, hash }) => {
+                const active = activeHash === hash;
+                return (
+                  <a
+                    key={hash}
+                    href={hash}
+                    onClick={() => setActiveHash(hash)}
+                    className="relative pb-0.5 text-[0.875rem] font-medium transition-colors duration-300"
+                    style={{
+                      color: scrolled
+                        ? active
+                          ? "#fff"
+                          : "rgba(255,255,255,0.55)"
+                        : active
+                          ? "#fff"
+                          : "rgba(255,255,255,0.8)",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.color = "#fff";
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!active)
+                        e.currentTarget.style.color = scrolled
+                          ? "rgba(255,255,255,0.55)"
+                          : "rgba(255,255,255,0.8)";
+                    }}
+                  >
+                    {label}
+                    {active && mounted && (
+                      <motion.span
+                        layoutId="hero-nav-line"
+                        className="absolute -bottom-0.5 left-0 right-0 h-0.5 rounded-full"
+                        style={{ background: "#00E5FF" }}
+                        transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                      />
+                    )}
+                  </a>
+                );
+              })}
+            </nav>
 
-          <FloatingIcon icon="storage" label="DATABASE" color="#00BFFF" top="10%" left="0%" delay={0} />
-          <FloatingIcon icon="code" label="" color="#00BFFF" top="-10%" left="20%" delay={0.2} />
-          <FloatingIcon icon="cloud" label="CLOUD" color="#00BFFF" top="-5%" right="10%" delay={0.4} />
-          <FloatingIcon icon="shield" label="SECURITY" color="#32CD32" bottom="15%" right="0%" delay={0.6} />
+            <div className="z-10 ml-auto flex items-center gap-2">
+              <motion.a
+                href="#kontak"
+                className="hidden items-center gap-1.5 text-[0.875rem] font-bold md:inline-flex"
+                animate={{
+                  boxShadow: scrolled
+                    ? "0 2px 12px rgba(0,229,255,0.25)"
+                    : "0 0 22px rgba(0,229,255,0.4)",
+                }}
+                transition={{ duration: 0.35 }}
+                style={{
+                  padding: scrolled ? "8px 18px" : "9px 20px",
+                  borderRadius: 999,
+                  color: BG,
+                  background: GRADIENT,
+                }}
+              >
+                Konsultasi Gratis
+                <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+                  arrow_forward
+                </span>
+              </motion.a>
+              <button
+                className="p-1.5 text-white md:hidden"
+                onClick={() => setMenuOpen(!menuOpen)}
+                aria-label="Menu"
+              >
+                <span className="material-symbols-outlined text-[1.75rem]">
+                  {menuOpen ? "close" : "menu"}
+                </span>
+              </button>
+            </div>
+          </motion.div>
+        </header>
+
+        {/* Mobile menu */}
+        {menuOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="fixed inset-0 z-40 flex flex-col md:hidden"
+            style={{
+              background: `rgba(${BG_RGB}, 0.97)`,
+              paddingTop: scrolled ? NAV_H_FLOAT + 28 : NAV_H,
+            }}
+          >
+            <div className="flex flex-col px-6 py-4">
+              {navLinks.map(({ label, hash }) => (
+                <a
+                  key={hash}
+                  href={hash}
+                  className="border-b border-white/5 py-4 text-lg font-semibold text-white"
+                  onClick={() => {
+                    setMenuOpen(false);
+                    setActiveHash(hash);
+                  }}
+                >
+                  {label}
+                </a>
+              ))}
+              <a
+                href="#kontak"
+                className="mt-6 rounded-full py-3.5 text-center font-bold"
+                style={{ background: GRADIENT, color: BG }}
+                onClick={() => setMenuOpen(false)}
+              >
+                Konsultasi Gratis
+              </a>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Hero content ΓÇö teks di kiri, visual dari background */}
+        <div
+          className="relative z-10 mx-auto w-full max-w-[1440px]"
+          style={{
+            marginTop: NAV_H,
+            padding: "16px clamp(24px, 4vw, 56px) 28px",
+          }}
+        >
+          <motion.div
+            variants={stagger}
+            initial="hidden"
+            animate="show"
+            className="w-full lg:w-[46%] lg:max-w-[500px]"
+          >
+            <motion.div
+              variants={fadeUp}
+              className="mb-4 inline-flex items-center gap-2"
+              style={{
+                padding: "5px 14px",
+                borderRadius: 999,
+                border: "1px solid rgba(255,255,255,0.14)",
+                background: "rgba(255,255,255,0.03)",
+              }}
+            >
+              <span style={{ fontSize: 8, color: "rgba(255,255,255,0.45)" }}>Γ£ª</span>
+              <span
+                style={{
+                  fontSize: 9.5,
+                  fontWeight: 500,
+                  letterSpacing: "0.16em",
+                  color: "rgba(255,255,255,0.5)",
+                  textTransform: "uppercase",
+                }}
+              >
+                {(hero.hero_badge || "").replace(/Γ£ª/g, "").trim()}
+              </span>
+              <span style={{ fontSize: 8, color: "rgba(255,255,255,0.45)" }}>Γ£ª</span>
+            </motion.div>
+
+            <motion.h1
+              variants={fadeUp}
+              className="mb-3 font-black leading-[1.08] tracking-[-0.02em] text-white"
+              style={{ fontSize: "clamp(2rem, 4vw, 3.25rem)" }}
+            >
+              <RenderTitle raw={hero.hero_title} />
+            </motion.h1>
+
+            <motion.p
+              variants={fadeUp}
+              className="mb-5 max-w-[400px] leading-[1.7]"
+              style={{
+                fontSize: "0.9rem",
+                color: "rgba(255,255,255,0.48)",
+              }}
+            >
+              {hero.hero_description}
+            </motion.p>
+
+            <motion.div variants={fadeUp} className="mb-5 flex flex-wrap items-center gap-3">
+              <a
+                href={hero.hero_cta_primary_link}
+                className="inline-flex items-center gap-2 font-bold"
+                style={{
+                  padding: "12px 24px",
+                  borderRadius: 10,
+                  fontSize: "0.875rem",
+                  color: BG,
+                  background: GRADIENT,
+                  boxShadow: "0 0 28px rgba(0,229,255,0.45)",
+                }}
+              >
+                {hero.hero_cta_primary_text}
+                <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                  arrow_forward
+                </span>
+              </a>
+              <a
+                href={hero.hero_cta_secondary_link}
+                className="inline-flex items-center font-semibold"
+                style={{
+                  padding: "12px 24px",
+                  borderRadius: 10,
+                  fontSize: "0.875rem",
+                  color: "#fff",
+                  border: "1.5px solid rgba(255,255,255,0.2)",
+                  background: "rgba(0,0,0,0.5)",
+                }}
+              >
+                {hero.hero_cta_secondary_text}
+              </a>
+            </motion.div>
+
+            <motion.div
+              variants={fadeUp}
+              className="inline-flex flex-wrap items-center"
+              style={{
+                padding: "8px 18px",
+                borderRadius: 999,
+                border: "1px solid rgba(255,255,255,0.09)",
+                background: "rgba(0,0,0,0.35)",
+              }}
+            >
+              {["Solusi Aman", "Terpercaya", "Profesional"].map((label, i) => (
+                <span key={label} className="inline-flex items-center">
+                  {i > 0 && (
+                    <span className="mx-2.5 text-white/25 text-[13px]">ΓÇó</span>
+                  )}
+                  <span
+                    className="material-symbols-outlined mr-1"
+                    style={{ fontSize: 13, color: "#129E92" }}
+                  >
+                    verified_user
+                  </span>
+                  <span
+                    className="text-[12px] font-medium"
+                    style={{ color: "rgba(255,255,255,0.62)" }}
+                  >
+                    {label}
+                  </span>
+                </span>
+              ))}
+            </motion.div>
+            </motion.div>
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 }
 
-function FloatingIcon({ icon, label, color, top, left, right, bottom, delay }: any) {
-  return (
-    <motion.div 
-      initial={{ y: 0 }}
-      animate={{ y: [0, -20, 0] }}
-      transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay }}
-      className="absolute z-20 flex flex-col items-center gap-2"
-      style={{ top, left, right, bottom }}
-    >
-      <div className="p-4 rounded-2xl border bg-black/80 backdrop-blur-xl shadow-2xl flex items-center justify-center" 
-           style={{ borderColor: color + "44", boxShadow: "0 0 30px " + color + "22" }}>
-        <span className="material-symbols-outlined" style={{ color, fontSize: 32 }}>{icon}</span>
-      </div>
-      {label && <span className="text-[10px] font-black tracking-[0.3em]" style={{ color }}>{label}</span>}
-    </motion.div>
-  );
-}
+export { NAV_H };

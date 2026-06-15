@@ -1,7 +1,8 @@
 @import "tailwindcss";
 
 @theme {
-  --color-background: #0A0E1A;
+  --color-background: #040B12;
+  --color-hero-bg: #040B12;
   --color-surface: #161B2E;
   --color-surface-variant: #1E2540;
   --color-primary: #00BFFF;
@@ -12,8 +13,8 @@
   --color-outline: rgba(255, 255, 255, 0.1);
   --color-outline-variant: rgba(255, 255, 255, 0.05);
 
-  --color-accent-start: #00BFFF;
-  --color-accent-end: #32CD32;
+  --color-accent-start: #00E5FF;
+  --color-accent-end: #26FF5C;
 
   --radius: 1rem;
   --radius-lg: 1.5rem;

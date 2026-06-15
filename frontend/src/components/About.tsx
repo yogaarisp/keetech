@@ -4,33 +4,30 @@ import { motion, Variants } from "framer-motion";
 import { useEffect, useState } from "react";
 import { getSettings } from "@/lib/api";
 import { getImageUrl } from "@/lib/utils";
+import { SectionShell, SectionBadge, GradientText } from "@/components/SectionBackground";
+import { BG, GRADIENT, TEXT_MUTED, BORDER_SUBTLE, CARD_BG } from "@/lib/theme";
 
 const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 30 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
+  hidden: { opacity: 0, y: 24 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
 };
 
 const staggerContainer: Variants = {
   hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.15
-    }
-  }
+  show: { opacity: 1, transition: { staggerChildren: 0.12 } },
 };
 
 const defaultReasons = [
   { title: "Harga Transparan", desc: "Tidak ada biaya tersembunyi. Semua estimasi diberikan secara jujur dan detail." },
   { title: "Dukungan 24/7", desc: "Tim teknis kami selalu siap siaga membantu operasional bisnis Anda kapanpun." },
-  { title: "Garansi Layanan", desc: "Kami menjamin kualitas setiap pekerjaan dengan perlindungan garansi resmi." }
+  { title: "Garansi Layanan", desc: "Kami menjamin kualitas setiap pekerjaan dengan perlindungan garansi resmi." },
 ];
 
 const defaultStats = [
   { val: "50+", label: "Klien Aktif" },
   { val: "200+", label: "Proyek Selesai" },
   { val: "99%", label: "Kepuasan Klien" },
-  { val: "24/7", label: "Support Siaga" }
+  { val: "24/7", label: "Support Siaga" },
 ];
 
 const defaultAbout = {
@@ -47,7 +44,7 @@ export default function About({ initialData }: { initialData?: any }) {
         { val: s.stat_clients || defaultStats[0].val, label: "Klien Aktif" },
         { val: s.stat_projects || defaultStats[1].val, label: "Proyek Selesai" },
         { val: s.stat_satisfaction || defaultStats[2].val, label: "Kepuasan Klien" },
-        { val: s.stat_support || defaultStats[3].val, label: "Support Siaga" }
+        { val: s.stat_support || defaultStats[3].val, label: "Support Siaga" },
       ];
     }
     return defaultStats;
@@ -87,7 +84,7 @@ export default function About({ initialData }: { initialData?: any }) {
               { val: s.stat_clients || "50+", label: "Klien Aktif" },
               { val: s.stat_projects || "200+", label: "Proyek Selesai" },
               { val: s.stat_satisfaction || "99%", label: "Kepuasan Klien" },
-              { val: s.stat_support || "24/7", label: "Support Siaga" }
+              { val: s.stat_support || "24/7", label: "Support Siaga" },
             ]);
           }
           if (settings?.features) {
@@ -105,78 +102,126 @@ export default function About({ initialData }: { initialData?: any }) {
               experienceYears: settings.about.about_experience_years || defaultAbout.experienceYears,
             });
           }
-        } catch (error) {}
+        } catch {}
       }
       fetchData();
     }
   }, [initialData]);
 
   return (
-    <section className="py-20 md:py-24 bg-surface" id="tentang">
-      <div className="max-w-7xl mx-auto px-4 sm:px-8">
-        <div className="grid lg:grid-cols-2 gap-12 sm:gap-16 items-center mb-16 sm:mb-20">
-          <motion.div 
-            initial={false}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="relative order-2 lg:order-1"
-          >
-            <div className="aspect-square rounded-3xl overflow-hidden shadow-2xl">
-              <img 
-                alt={`${about.heading} - KeeTech Professional IT Team`} 
-                className="w-full h-full object-cover" 
-                src={getImageUrl(about.image, defaultAbout.image)}
-              />
-            </div>
-            <div className="absolute -right-4 -top-6 sm:-right-6 sm:-top-6 w-28 h-28 sm:w-40 sm:h-40 bg-secondary-container rounded-2xl p-4 sm:p-5 flex flex-col justify-end text-primary shadow-xl border border-white/20">
-              <span className="text-2xl sm:text-4xl font-black">{about.experienceYears}</span>
-              <span className="font-bold text-[10px] sm:text-xs leading-tight">Tahun Pengalaman</span>
-            </div>
-          </motion.div>
-          
-          <motion.div
-            initial={false}
-            whileInView="show"
-            viewport={{ once: true }}
-            variants={staggerContainer}
-            className="order-1 lg:order-2"
-          >
-            <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl font-black mb-6 sm:mb-8 leading-tight tracking-tight text-slate-800">
-              {about.heading}
-            </motion.h2>
-            <ul className="space-y-4 sm:space-y-6">
-              {reasons.map((item, idx) => (
-                <motion.li variants={fadeUp} key={idx} className="flex gap-3 sm:gap-4">
-                  <div className="flex-shrink-0 w-6 h-6 sm:w-8 sm:h-8 bg-primary text-on-primary rounded-full flex items-center justify-center mt-1">
-                    <span className="material-symbols-outlined text-xs sm:text-base">check</span>
-                  </div>
-                  <div>
-                    <p className="font-bold text-base sm:text-lg text-slate-800">{item.title}</p>
-                    <p className="text-on-surface-variant text-sm mt-1">{item.desc}</p>
-                  </div>
-                </motion.li>
-              ))}
-            </ul>
-          </motion.div>
-        </div>
-        
-        {/* Stats Bar */}
-        <motion.div 
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
+    <SectionShell id="tentangkami" glow="left">
+      <div className="mb-16 grid items-center gap-12 sm:mb-20 sm:gap-16 lg:grid-cols-2">
+        <motion.div
+          initial={{ opacity: 0, x: -24 }}
+          whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="bg-primary-container rounded-3xl p-6 sm:p-12 grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 text-on-primary text-center"
+          className="relative order-2 lg:order-1"
         >
-          {stats.map((stat, idx) => (
-            <div key={idx} className="flex flex-col items-center">
-              <div className="text-3xl sm:text-4xl font-black mb-1">{stat.val}</div>
-              <div className="text-on-primary-container text-xs sm:text-sm font-medium uppercase tracking-widest">{stat.label}</div>
-            </div>
-          ))}
+          <div
+            className="aspect-square overflow-hidden rounded-2xl"
+            style={{
+              border: `1px solid ${BORDER_SUBTLE}`,
+              boxShadow: "0 24px 48px rgba(0,0,0,0.4), 0 0 40px rgba(0,229,255,0.06)",
+            }}
+          >
+            <img
+              alt={`${about.heading} - KeeTech Professional IT Team`}
+              className="h-full w-full object-cover"
+              src={getImageUrl(about.image, defaultAbout.image)}
+            />
+          </div>
+          <div
+            className="absolute -right-4 -top-6 flex flex-col justify-end rounded-xl p-4 sm:-right-6 sm:-top-6 sm:p-5"
+            style={{
+              width: "7rem",
+              height: "7rem",
+              background: GRADIENT,
+              boxShadow: "0 8px 32px rgba(0,229,255,0.35)",
+            }}
+          >
+            <span className="text-2xl font-black sm:text-4xl" style={{ color: BG }}>
+              {about.experienceYears}
+            </span>
+            <span className="text-[10px] font-bold leading-tight sm:text-xs" style={{ color: BG }}>
+              Tahun Pengalaman
+            </span>
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+          variants={staggerContainer}
+          className="order-1 lg:order-2"
+        >
+          <motion.div variants={fadeUp}>
+            <SectionBadge>Tentang Kami</SectionBadge>
+          </motion.div>
+          <motion.h2
+            variants={fadeUp}
+            className="mb-6 text-3xl font-black leading-tight tracking-tight text-white sm:mb-8 sm:text-4xl"
+          >
+            {about.heading.includes("KeeTech") ? (
+              <>
+                {about.heading.split("KeeTech")[0]}
+                <GradientText>KeeTech</GradientText>
+                {about.heading.split("KeeTech")[1]}
+              </>
+            ) : (
+              about.heading
+            )}
+          </motion.h2>
+          <ul className="space-y-4 sm:space-y-6">
+            {reasons.map((item, idx) => (
+              <motion.li variants={fadeUp} key={idx} className="flex gap-3 sm:gap-4">
+                <div
+                  className="mt-1 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full sm:h-8 sm:w-8"
+                  style={{ background: GRADIENT }}
+                >
+                  <span className="material-symbols-outlined text-xs sm:text-base" style={{ color: BG }}>
+                    check
+                  </span>
+                </div>
+                <div>
+                  <p className="text-base font-bold text-white sm:text-lg">{item.title}</p>
+                  <p className="mt-1 text-sm" style={{ color: TEXT_MUTED }}>
+                    {item.desc}
+                  </p>
+                </div>
+              </motion.li>
+            ))}
+          </ul>
         </motion.div>
       </div>
-    </section>
+
+      <motion.div
+        initial={{ opacity: 0, y: 24 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+        className="grid grid-cols-2 gap-6 rounded-2xl p-6 sm:gap-8 sm:p-12 md:grid-cols-4"
+        style={{
+          background: CARD_BG,
+          border: `1px solid ${BORDER_SUBTLE}`,
+          backdropFilter: "blur(16px)",
+        }}
+      >
+        {stats.map((stat, idx) => (
+          <div key={idx} className="flex flex-col items-center text-center">
+            <div className="mb-1 text-3xl font-black sm:text-4xl">
+              <GradientText>{stat.val}</GradientText>
+            </div>
+            <div
+              className="text-xs font-medium uppercase tracking-widest sm:text-sm"
+              style={{ color: TEXT_MUTED }}
+            >
+              {stat.label}
+            </div>
+          </div>
+        ))}
+      </motion.div>
+    </SectionShell>
   );
 }
