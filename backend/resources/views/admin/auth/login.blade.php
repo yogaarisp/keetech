@@ -9,13 +9,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     <style>
         :root {
-            --bg: #040B12;
-            --bg-rgb: 4, 11, 18;
-            --gradient: linear-gradient(90deg, #00E5FF 0%, #26FF5C 100%);
-            --cyan: #00E5FF;
-            --teal: #129E92;
-            --text-muted: rgba(255, 255, 255, 0.48);
-            --border-subtle: rgba(255, 255, 255, 0.09);
+            --bg: #01030D;
+            --teal: #2DD4BF;
+            --teal-hover: #14B8A6;
+            --gradient: linear-gradient(90deg, #2DD4BF 0%, #34D399 100%);
+            --text-muted: rgba(255, 255, 255, 0.5);
+            --border-subtle: rgba(255, 255, 255, 0.1);
             --card-bg: rgba(255, 255, 255, 0.03);
         }
 
@@ -37,7 +36,7 @@
         }
 
         .dot-grid {
-            background-image: radial-gradient(circle, rgba(0, 190, 255, 0.13) 1px, transparent 1px);
+            background-image: radial-gradient(circle, rgba(45, 212, 191, 0.15) 1px, transparent 1px);
             background-size: 26px 26px;
         }
 
@@ -50,13 +49,13 @@
 
         .btn-gradient {
             background: var(--gradient);
-            color: var(--bg);
-            box-shadow: 0 0 28px rgba(0, 229, 255, 0.35);
+            color: #01030D;
+            box-shadow: 0 0 28px rgba(45, 212, 191, 0.35);
             transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
         }
 
         .btn-gradient:hover {
-            box-shadow: 0 0 36px rgba(0, 229, 255, 0.5);
+            box-shadow: 0 0 36px rgba(45, 212, 191, 0.5);
             transform: translateY(-1px);
         }
 
@@ -81,8 +80,8 @@
         }
 
         .input-field:focus {
-            border-color: rgba(0, 229, 255, 0.4);
-            box-shadow: 0 0 0 3px rgba(0, 229, 255, 0.12);
+            border-color: rgba(45, 212, 191, 0.4);
+            box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.12);
         }
 
         .login-card {
@@ -90,7 +89,7 @@
             border: 1px solid var(--border-subtle);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
-            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.4), 0 0 40px rgba(0, 229, 255, 0.04);
+            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.4), 0 0 40px rgba(45, 212, 191, 0.04);
         }
 
         .badge-pill {
@@ -114,7 +113,7 @@
             height: 85%;
             top: -5%;
             right: -5%;
-            background: radial-gradient(ellipse at 65% 45%, rgba(0, 229, 255, 0.12) 0%, transparent 62%);
+            background: radial-gradient(ellipse at 65% 45%, rgba(45, 212, 191, 0.12) 0%, transparent 62%);
             pointer-events: none;
         }
 
@@ -124,7 +123,7 @@
             height: 75%;
             bottom: -5%;
             left: -8%;
-            background: radial-gradient(ellipse at 30% 60%, rgba(0, 229, 255, 0.08) 0%, transparent 65%);
+            background: radial-gradient(ellipse at 30% 60%, rgba(45, 212, 191, 0.08) 0%, transparent 65%);
             pointer-events: none;
         }
 
@@ -134,7 +133,7 @@
             border-radius: 4px;
             border: 1px solid rgba(255, 255, 255, 0.2);
             background: rgba(255, 255, 255, 0.05);
-            accent-color: var(--cyan);
+            accent-color: var(--teal);
         }
     </style>
 </head>
@@ -145,7 +144,7 @@
     <div aria-hidden class="pointer-events-none absolute inset-0 overflow-hidden">
         <div class="glow-right"></div>
         <div class="glow-left"></div>
-        <div style="position:absolute;width:35%;height:45%;bottom:0;right:8%;background:radial-gradient(ellipse at bottom,rgba(0,229,255,0.08) 0%,transparent 70%);"></div>
+        <div style="position:absolute;width:35%;height:45%;bottom:0;right:8%;background:radial-gradient(ellipse at bottom,rgba(45,212,191,0.08) 0%,transparent 70%);"></div>
     </div>
 
     {{-- Brand --}}
@@ -153,7 +152,7 @@
         <div class="mb-5 inline-flex items-center justify-center">
             <div
                 class="flex h-14 w-14 items-center justify-center rounded-full text-xl font-black text-white sm:h-16 sm:w-16 sm:text-2xl"
-                style="background: var(--gradient); box-shadow: 0 0 20px rgba(0,229,255,0.45);"
+                style="background: var(--gradient); box-shadow: 0 0 20px rgba(45,212,191,0.45);"
             >K</div>
         </div>
         <div class="badge-pill mb-4">
@@ -177,7 +176,7 @@
         </div>
 
         @if (session('status'))
-            <div class="mb-4 rounded-lg px-4 py-3 text-sm font-medium" style="background:rgba(38,255,92,0.1);border:1px solid rgba(38,255,92,0.25);color:#26FF5C;">
+            <div class="mb-4 rounded-lg px-4 py-3 text-sm font-medium" style="background:rgba(45,212,191,0.1);border:1px solid rgba(45,212,191,0.25);color:var(--teal);">
                 {{ session('status') }}
             </div>
         @endif
@@ -192,7 +191,7 @@
                 </label>
                 <div class="relative group">
                     <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
-                        <span class="material-symbols-outlined text-lg transition-colors group-focus-within:text-[#00E5FF]" style="color: rgba(255,255,255,0.35);">person</span>
+                        <span class="material-symbols-outlined text-lg transition-colors group-focus-within:text-[var(--teal)]" style="color: rgba(255,255,255,0.35);">person</span>
                     </div>
                     <input
                         class="input-field"
@@ -217,7 +216,7 @@
                 </label>
                 <div class="relative group">
                     <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
-                        <span class="material-symbols-outlined text-lg transition-colors group-focus-within:text-[#00E5FF]" style="color: rgba(255,255,255,0.35);">key</span>
+                        <span class="material-symbols-outlined text-lg transition-colors group-focus-within:text-[var(--teal)]" style="color: rgba(255,255,255,0.35);">key</span>
                     </div>
                     <input
                         class="input-field"

@@ -1,103 +1,88 @@
 @extends('admin.layouts.app')
-
-@section('title', 'Signal Intelligence')
-
+@section('title', 'Detail Pesan Masuk')
 @section('content')
-<div class="space-y-10">
-    <div class="glass-card overflow-hidden flex flex-col">
-        <div class="px-10 py-8 border-b border-outline-variant/10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 md:gap-0 bg-white/50 dark:bg-slate-900/50">
-            <div class="flex items-center gap-4">
-                <div class="w-12 h-12 rounded-2xl bg-primary-container/10 border border-primary-container/20 flex items-center justify-center text-primary shadow-lg shadow-primary/5">
-                    <span class="material-symbols-outlined">{{ !$contact->is_read ? 'notifications_active' : 'mark_chat_read' }}</span>
-                </div>
-                <div>
-                    <h3 class="font-bold text-lg text-on-surface tracking-tight">Signal Decryption</h3>
-                    <p class="text-[10px] text-on-surface-variant/60 font-bold uppercase tracking-[0.2em] mt-1">Intercepted Payload Header</p>
-                </div>
-            </div>
-            <div class="flex items-center gap-4">
-                <span class="text-[10px] font-black text-on-surface-variant/40 uppercase tracking-widest bg-surface-container-high px-4 py-2 border border-outline-variant/10 rounded-xl">ID: #{{ $contact->id }}</span>
-                @if(!$contact->is_read)
-                    <span class="px-4 py-2 bg-primary text-on-primary rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-primary/30 animate-pulse">Unread Signal</span>
-                @endif
-            </div>
-        </div>
-        
-        <div class="p-10 lg:p-14">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-14">
-                <!-- Source Entity Info -->
-                <div class="lg:col-span-4 space-y-8">
-                    <div class="bg-surface-container-lowest border border-outline-variant/10 p-10 rounded-[40px] flex flex-col items-center text-center shadow-xl relative overflow-hidden group">
-                        <div class="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-                        
-                        <div class="w-24 h-24 rounded-full bg-surface-container border border-outline-variant/10 flex items-center justify-center text-primary text-4xl font-black shadow-inner mb-8 relative z-10 transition-transform group-hover:scale-110">
-                            {{ substr($contact->name, 0, 1) }}
-                        </div>
-                        
-                        <div class="relative z-10 w-full">
-                            <h4 class="text-xl font-bold text-on-surface tracking-tight leading-none mb-2">{{ $contact->name }}</h4>
-                            <p class="text-[10px] font-black text-secondary uppercase tracking-[0.2em] mb-10">{{ $contact->email }}</p>
-                            
-                            <div class="pt-10 border-t border-outline-variant/10 w-full space-y-6">
-                                <div class="flex items-center justify-between">
-                                    <span class="text-[10px] font-black text-on-surface-variant/40 uppercase tracking-widest">Inquiry Focus</span>
-                                    <span class="text-xs font-black text-on-surface-variant bg-surface-container px-3 py-1 rounded-lg">{{ $contact->service_type }}</span>
-                                </div>
-                                <div class="flex items-center justify-between">
-                                    <span class="text-[10px] font-black text-on-surface-variant/40 uppercase tracking-widest">Intercept Date</span>
-                                    <span class="text-xs font-black text-on-surface">{{ $contact->created_at->format('d M Y') }}</span>
-                                </div>
-                                <div class="flex items-center justify-between">
-                                    <span class="text-[10px] font-black text-on-surface-variant/40 uppercase tracking-widest">Timestamp</span>
-                                    <span class="text-xs font-black text-on-surface">{{ $contact->created_at->format('H:i') }} WIB</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Signal Payloads -->
-                <div class="lg:col-span-8 flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-center gap-3 mb-8">
-                            <span class="material-symbols-outlined text-primary text-[20px]">terminal</span>
-                            <p class="text-[11px] font-black text-on-surface-variant/60 uppercase tracking-[0.2em]">Signal Transcript Data</p>
-                        </div>
-                        
-                        <div class="bg-surface-container-high p-10 lg:p-12 border border-outline-variant/20 rounded-[40px] relative overflow-hidden group/message shadow-inner">
-                            <span class="material-symbols-outlined absolute -top-10 -right-10 text-[200px] text-on-surface-variant/5 group-hover/message:text-primary/10 transition-colors duration-1000">quick_phrases</span>
-                            
-                            <div class="relative z-10">
-                                <p class="text-on-surface-variant leading-[2.2] text-lg font-medium italic whitespace-pre-wrap">"{{ $contact->message }}"</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mt-12 flex flex-wrap gap-4">
-                        <a href="mailto:{{ $contact->email }}" class="flex-1 bg-primary text-on-primary font-black py-5 rounded-[30px] text-center hover:brightness-110 shadow-xl shadow-primary/20 flex items-center justify-center gap-4 group uppercase text-[10px] tracking-[0.2em] transition-all">
-                            <span class="material-symbols-outlined group-hover:-translate-y-1 group-hover:translate-x-1 transition-transform">send</span>
-                            Communicate Reply
-                        </a>
-                        <form action="{{ route('admin.contacts.destroy', $contact) }}" method="POST" onsubmit="return confirm('Execute permanent deletion of shard #{{ $contact->id }}?')" class="w-max">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="w-20 h-full bg-surface-container-low text-error border border-outline-variant/10 rounded-[30px] hover:bg-error hover:text-on-error transition-all flex items-center justify-center group shadow-sm">
-                                <span class="material-symbols-outlined group-hover:rotate-12 transition-transform">delete_forever</span>
-                            </button>
-                        </form>
-                    </div>
-                </div>
+<div style="margin-bottom:28px;">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+        <a href="{{ route('admin.contacts.index') }}" class="icon-btn" style="width:36px;height:36px;border-radius:10px;">
+            <span class="material-symbols-outlined" style="font-size:18px;">arrow_back</span>
+        </a>
+        <div>
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.18em;color:var(--teal);margin-bottom:4px;">
+                Detail Komunikasi
             </div>
+            <h2 style="font-size:20px;font-weight:800;color:#fff;margin:0;">
+                Baca Pesan Klien
+            </h2>
         </div>
     </div>
+</div>
 
-    <div class="flex items-center justify-center py-6">
-        <a href="{{ route('admin.contacts.index') }}" class="inline-flex items-center gap-3 text-on-surface-variant/40 hover:text-primary font-black transition-all group uppercase text-[10px] tracking-[0.2em]">
-            <span class="material-symbols-outlined text-sm group-hover:-translate-x-2 transition-transform">keyboard_double_arrow_left</span>
-            Operational Intelligence HQ
-        </a>
+<div style="display:grid;grid-template-columns:1fr;gap:24px;">
+    @if(!$contact->is_read)
+        <div style="background:rgba(45,212,191,0.1);border:1px solid rgba(45,212,191,0.2);padding:16px;border-radius:12px;display:flex;align-items:center;gap:12px;color:var(--teal);">
+            <span class="material-symbols-outlined">mark_email_unread</span>
+            <div>
+                <div style="font-size:13px;font-weight:800;">Pesan Baru</div>
+                <div style="font-size:11px;opacity:0.8;">Pesan ini ditandai sebagai belum dibaca. (Kini telah dibuka)</div>
+            </div>
+        </div>
+    @endif
+
+    <div class="admin-card" style="display:grid;grid-template-columns:1fr 2fr;gap:0;">
+        <div style="padding:32px;border-right:1px solid var(--border);">
+            <div style="display:flex;flex-direction:column;align-items:center;text-align:center;">
+                <div style="width:80px;height:80px;border-radius:50%;background:var(--bg-hover);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--teal);font-size:32px;font-weight:800;margin-bottom:16px;">
+                    {{ substr($contact->name, 0, 1) }}
+                </div>
+                <h3 style="font-size:18px;font-weight:800;color:#fff;margin:0 0 4px;">{{ $contact->name }}</h3>
+                <a href="mailto:{{ $contact->email }}" style="font-size:12px;font-weight:600;color:var(--teal);text-decoration:none;display:inline-flex;align-items:center;gap:4px;">
+                    <span class="material-symbols-outlined" style="font-size:14px;">mail</span> {{ $contact->email }}
+                </a>
+
+                <div style="width:100%;height:1px;background:var(--border);margin:24px 0;"></div>
+
+                <div style="width:100%;text-align:left;display:flex;flex-direction:column;gap:16px;">
+                    <div>
+                        <div style="font-size:10px;font-weight:700;color:var(--text-faint);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">Layanan Diminati</div>
+                        <div style="font-size:13px;font-weight:600;color:#fff;">{{ $contact->service_type }}</div>
+                    </div>
+                    <div>
+                        <div style="font-size:10px;font-weight:700;color:var(--text-faint);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">Tanggal Masuk</div>
+                        <div style="font-size:13px;font-weight:600;color:#fff;">{{ $contact->created_at->format('d M Y') }}</div>
+                    </div>
+                    <div>
+                        <div style="font-size:10px;font-weight:700;color:var(--text-faint);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">Waktu (WIB)</div>
+                        <div style="font-size:13px;font-weight:600;color:#fff;">{{ $contact->created_at->format('H:i') }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="padding:32px;display:flex;flex-direction:column;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px;">
+                <span class="material-symbols-outlined" style="color:var(--teal);">forum</span>
+                <div style="font-size:14px;font-weight:700;color:#fff;">Isi Pesan</div>
+            </div>
+
+            <div style="background:var(--bg-hover);border:1px solid var(--border);border-radius:16px;padding:24px;flex-grow:1;position:relative;">
+                <span class="material-symbols-outlined" style="position:absolute;top:16px;right:16px;font-size:48px;color:var(--text-faint);opacity:0.2;">format_quote</span>
+                <p style="font-size:14px;line-height:1.8;color:var(--text-dim);white-space:pre-wrap;margin:0;position:relative;z-index:1;">{{ $contact->message }}</p>
+            </div>
+
+            <div style="display:flex;gap:12px;margin-top:24px;">
+                <a href="mailto:{{ $contact->email }}" class="btn-primary" style="flex-grow:1;justify-content:center;">
+                    <span class="material-symbols-outlined" style="font-size:18px;">reply</span> Balas via Email
+                </a>
+                <form action="{{ route('admin.contacts.destroy', $contact) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus pesan ini?')" style="display:inline-block;">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="icon-btn" style="width:44px;height:44px;color:var(--red);border-color:rgba(239,68,68,0.2);">
+                        <span class="material-symbols-outlined">delete</span>
+                    </button>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
 @endsection
-
-

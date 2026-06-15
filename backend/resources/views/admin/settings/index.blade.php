@@ -1,503 +1,435 @@
 @extends('admin.layouts.app')
-
 @section('title', 'Pengaturan Situs')
-
 @section('content')
-<div>
-    <div class="mb-8 flex items-center justify-between">
-        <div>
-            <h2 class="font-bold text-2xl text-stone-900 dark:text-white tracking-tight">Pengaturan Situs</h2>
-            <p class="text-sm text-stone-500 dark:text-stone-400 mt-1">Kelola semua konten landing page dan konfigurasi situs dari sini.</p>
+
+<div style="margin-bottom:24px;">
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.18em;color:var(--teal);margin-bottom:6px;">Konfigurasi</div>
+    <h2 style="font-size:22px;font-weight:800;color:#fff;margin:0 0 4px;">Pengaturan Situs</h2>
+    <p style="font-size:13px;color:var(--text-dim);margin:0;">Kelola semua konten landing page dari sini.</p>
+</div>
+
+<form action="{{ route('admin.settings.update') }}" method="POST" enctype="multipart/form-data">
+    @csrf
+
+    {{-- Tab Navigation --}}
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px;border-bottom:1px solid var(--border);padding-bottom:0;">
+        @php
+            $tabs = [
+                ['id' => 'hero',     'label' => 'Hero',       'icon' => 'rocket_launch'],
+                ['id' => 'about',    'label' => 'About',      'icon' => 'info'],
+                ['id' => 'general',  'label' => 'General',    'icon' => 'tune'],
+                ['id' => 'contact',  'label' => 'Kontak',     'icon' => 'call'],
+                ['id' => 'social',   'label' => 'Social',     'icon' => 'share'],
+                ['id' => 'stats',    'label' => 'Statistik',  'icon' => 'monitoring'],
+                ['id' => 'features', 'label' => 'Keunggulan', 'icon' => 'star'],
+                ['id' => 'footer',   'label' => 'Footer',     'icon' => 'bottom_navigation'],
+                ['id' => 'webhook',  'label' => 'Webhook',    'icon' => 'hub'],
+            ];
+        @endphp
+
+        @foreach($tabs as $tab)
+        <button type="button" onclick="showTab('{{ $tab['id'] }}')"
+            id="tab-btn-{{ $tab['id'] }}"
+            style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px 8px 0 0;font-size:12px;font-weight:600;border:1px solid transparent;border-bottom:none;cursor:pointer;transition:all 0.15s;background:none;color:var(--text-dim);margin-bottom:-1px;">
+            <span class="material-symbols-outlined" style="font-size:15px">{{ $tab['icon'] }}</span>
+            {{ $tab['label'] }}
+        </button>
+        @endforeach
+    </div>
+
+    {{-- ===== HERO TAB ===== --}}
+    <div class="tab-panel admin-card" id="tab-hero">
+        <div style="padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;">
+            <span class="material-symbols-outlined" style="color:var(--teal);font-size:20px">rocket_launch</span>
+            <div>
+                <div style="font-size:14px;font-weight:700;color:#fff;">Hero Section</div>
+                <div style="font-size:11px;color:var(--text-faint);">Bagian pertama yang dilihat pengunjung.</div>
+            </div>
+        </div>
+        <div style="padding:24px;display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            @foreach($settings['hero'] as $setting)
+                @php
+                    $label = ucwords(str_replace(['hero_', '_'], ['', ' '], $setting->key));
+                    $isLong = in_array($setting->key, ['hero_description', 'hero_image', 'hero_title']);
+                @endphp
+                <div style="{{ $isLong ? 'grid-column:1/-1;' : '' }}">
+                    <label class="admin-label">{{ $label }}</label>
+                    @if($setting->key === 'hero_description')
+                        <textarea name="{{ $setting->key }}" rows="3" class="admin-input" style="resize:none;">{{ $setting->value }}</textarea>
+                    @elseif($setting->key === 'hero_image')
+                        <div class="space-y-3">
+                            <div class="drop-zone" data-target="hero_image" style="border:2px dashed var(--border);border-radius:12px;padding:20px;cursor:pointer;position:relative;min-height:140px;display:flex;align-items:center;justify-content:center;text-align:center;transition:border-color 0.2s;">
+                                <input type="file" name="hero_image_file" class="hidden file-input" accept="image/*">
+                                @php
+                                    $heroImg = $setting->value;
+                                    $heroPreview = $heroImg ? (str_starts_with($heroImg, 'http') ? $heroImg : asset('storage/' . $heroImg)) : null;
+                                @endphp
+                                <div class="preview-container {{ $heroPreview ? '' : 'hidden' }}" style="position:absolute;inset:0;border-radius:10px;overflow:hidden;">
+                                    <img src="{{ $heroPreview }}" class="img-preview" style="width:100%;height:100%;object-fit:cover;">
+                                    <div style="position:absolute;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.2s;" class="hover-overlay">
+                                        <span style="background:#fff;color:#000;font-size:10px;font-weight:700;padding:4px 10px;border-radius:6px;text-transform:uppercase;">Ganti</span>
+                                    </div>
+                                </div>
+                                <div class="drop-text {{ $heroPreview ? 'hidden' : '' }}" style="pointer-events:none;">
+                                    <span class="material-symbols-outlined" style="font-size:28px;color:var(--text-faint);display:block;margin-bottom:6px;">image</span>
+                                    <p style="font-size:11px;color:var(--text-faint);">Drag & drop atau klik untuk upload</p>
+                                </div>
+                            </div>
+                            <input type="text" name="{{ $setting->key }}" value="{{ $setting->value }}" class="admin-input url-input" placeholder="Atau tempel URL gambar..." style="font-size:11px;font-family:monospace;">
+                        </div>
+                    @elseif($setting->key === 'hero_title')
+                        <textarea name="{{ $setting->key }}" rows="2" class="admin-input" style="resize:none;">{{ $setting->value }}</textarea>
+                    @else
+                        <input type="text" name="{{ $setting->key }}" value="{{ $setting->value }}" class="admin-input">
+                    @endif
+                </div>
+            @endforeach
         </div>
     </div>
 
-    <form action="{{ route('admin.settings.update') }}" method="POST" enctype="multipart/form-data" class="space-y-8 pb-32">
-        @csrf
-
-        {{-- Tab Navigation --}}
-        <div class="flex flex-wrap gap-2 border-b border-stone-200 dark:border-white/10 pb-0">
-            <button type="button" onclick="showTab('hero')" class="tab-btn active px-5 py-3 text-sm font-bold rounded-t-xl transition-all" data-tab="hero">
-                <span class="material-symbols-outlined text-base align-middle mr-1">rocket_launch</span> Hero
-            </button>
-            <button type="button" onclick="showTab('about')" class="tab-btn px-5 py-3 text-sm font-bold rounded-t-xl transition-all" data-tab="about">
-                <span class="material-symbols-outlined text-base align-middle mr-1">info</span> About
-            </button>
-            <button type="button" onclick="showTab('general')" class="tab-btn px-5 py-3 text-sm font-bold rounded-t-xl transition-all" data-tab="general">
-                <span class="material-symbols-outlined text-base align-middle mr-1">settings</span> General
-            </button>
-            <button type="button" onclick="showTab('contact')" class="tab-btn px-5 py-3 text-sm font-bold rounded-t-xl transition-all" data-tab="contact">
-                <span class="material-symbols-outlined text-base align-middle mr-1">call</span> Kontak
-            </button>
-            <button type="button" onclick="showTab('social')" class="tab-btn px-5 py-3 text-sm font-bold rounded-t-xl transition-all" data-tab="social">
-                <span class="material-symbols-outlined text-base align-middle mr-1">share</span> Social
-            </button>
-            <button type="button" onclick="showTab('stats')" class="tab-btn px-5 py-3 text-sm font-bold rounded-t-xl transition-all" data-tab="stats">
-                <span class="material-symbols-outlined text-base align-middle mr-1">monitoring</span> Stats
-            </button>
-            <button type="button" onclick="showTab('features')" class="tab-btn px-5 py-3 text-sm font-bold rounded-t-xl transition-all" data-tab="features">
-                <span class="material-symbols-outlined text-base align-middle mr-1">star</span> Keunggulan
-            </button>
-            <button type="button" onclick="showTab('footer')" class="tab-btn px-5 py-3 text-sm font-bold rounded-t-xl transition-all" data-tab="footer">
-                <span class="material-symbols-outlined text-base align-middle mr-1">bottom_navigation</span> Footer
-            </button>
-            <button type="button" onclick="showTab('webhook')" class="tab-btn px-5 py-3 text-sm font-bold rounded-t-xl transition-all" data-tab="webhook">
-                <span class="material-symbols-outlined text-base align-middle mr-1">hub</span> Webhook
-            </button>
+    {{-- ===== ABOUT TAB ===== --}}
+    <div class="tab-panel admin-card hidden" id="tab-about">
+        <div style="padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;">
+            <span class="material-symbols-outlined" style="color:var(--teal);font-size:20px">info</span>
+            <div>
+                <div style="font-size:14px;font-weight:700;color:#fff;">About / Tentang Kami</div>
+                <div style="font-size:11px;color:var(--text-faint);">Gambar tim dan tahun pengalaman.</div>
+            </div>
         </div>
-
-        {{-- ===== HERO TAB ===== --}}
-        <div class="tab-content" id="tab-hero">
-            <div class="bg-white dark:bg-slate-900 rounded-2xl border border-stone-200 dark:border-white/10 overflow-hidden">
-                <div class="px-8 py-5 border-b border-stone-200 dark:border-white/10 bg-gradient-to-r from-[#800020]/5 to-transparent flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-[#800020]/10 text-[#800020] flex items-center justify-center">
-                        <span class="material-symbols-outlined">rocket_launch</span>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-stone-900 dark:text-white">Hero Section</h3>
-                        <p class="text-xs text-stone-500">Bagian pertama yang dilihat pengunjung saat membuka landing page.</p>
-                    </div>
-                </div>
-                <div class="p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-                    @foreach($settings['hero'] as $setting)
-                        @php
-                            $label = str_replace(['hero_', '_'], ['', ' '], $setting->key);
-                            $isLong = in_array($setting->key, ['hero_description', 'hero_image', 'hero_title']);
-                        @endphp
-                        <div class="{{ $isLong ? 'md:col-span-2' : '' }}">
-                            <label class="block text-xs font-bold text-stone-600 dark:text-stone-400 mb-2 uppercase tracking-wider">{{ $label }}</label>
-                            @if($setting->key === 'hero_description')
-                                <textarea name="{{ $setting->key }}" rows="3" class="w-full px-4 py-3 bg-stone-50 dark:bg-white/5 border border-stone-200 dark:border-white/10 rounded-xl focus:ring-2 focus:ring-[#800020]/20 focus:border-[#800020] outline-none transition-all text-sm text-stone-900 dark:text-white resize-none">{{ $setting->value }}</textarea>
-                            @elseif($setting->key === 'hero_image')
-                                <div class="space-y-4">
-                                    <div class="drop-zone relative group cursor-pointer" data-target="hero_image">
-                                        <input type="file" name="hero_image_file" class="hidden file-input" accept="image/*">
-                                        <div class="drop-zone-display border-2 border-dashed border-stone-200 dark:border-white/10 rounded-2xl p-6 transition-all flex flex-col items-center justify-center min-h-[150px] text-center bg-stone-50 dark:bg-white/5">
-                                            @php
-                                                $heroImg = $setting->value;
-                                                $heroPreview = $heroImg ? (str_starts_with($heroImg, 'http') ? $heroImg : asset('storage/' . $heroImg)) : null;
-                                            @endphp
-                                            <div class="preview-container {{ $heroPreview ? '' : 'hidden' }} absolute inset-0 rounded-2xl overflow-hidden">
-                                                <img src="{{ $heroPreview }}" class="img-preview w-full h-full object-cover">
-                                                <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                                    <span class="bg-white text-stone-900 font-bold px-3 py-1 rounded-lg text-[10px] uppercase">Ganti Gambar</span>
-                                                </div>
-                                            </div>
-                                            <div class="drop-text {{ $heroPreview ? 'hidden' : '' }} space-y-2">
-                                                <span class="material-symbols-outlined text-stone-400 text-3xl">image</span>
-                                                <p class="text-[10px] font-bold text-stone-500 uppercase">Tarik gambar hero atau klik disini</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <input type="text" name="{{ $setting->key }}" value="{{ $setting->value }}" class="url-input w-full px-4 py-2 bg-stone-50 dark:bg-white/5 border border-stone-200 dark:border-white/10 rounded-xl focus:ring-2 focus:ring-[#800020]/20 focus:border-[#800020] outline-none transition-all text-[10px] text-stone-400 font-mono" placeholder="Atau tempel URL gambar di sini...">
+        <div style="padding:24px;display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            @foreach($settings['about'] as $setting)
+                @php $label = ucwords(str_replace(['about_', '_'], ['', ' '], $setting->key)); @endphp
+                <div style="{{ $setting->key === 'about_image' ? 'grid-column:1/-1;' : '' }}">
+                    <label class="admin-label">{{ $label }}</label>
+                    @if($setting->key === 'about_image')
+                        <div class="space-y-3">
+                            <div class="drop-zone" data-target="about_image" style="border:2px dashed var(--border);border-radius:12px;padding:20px;cursor:pointer;position:relative;min-height:140px;display:flex;align-items:center;justify-content:center;text-align:center;">
+                                <input type="file" name="about_image_file" class="hidden file-input" accept="image/*">
+                                @php
+                                    $aboutImg = $setting->value;
+                                    $aboutPreview = $aboutImg ? (str_starts_with($aboutImg, 'http') ? $aboutImg : asset('storage/' . $aboutImg)) : null;
+                                @endphp
+                                <div class="preview-container {{ $aboutPreview ? '' : 'hidden' }}" style="position:absolute;inset:0;border-radius:10px;overflow:hidden;">
+                                    <img src="{{ $aboutPreview }}" class="img-preview" style="width:100%;height:100%;object-fit:cover;">
                                 </div>
-                            @else
-                                <input type="text" name="{{ $setting->key }}" value="{{ $setting->value }}" class="w-full px-4 py-3 bg-stone-50 dark:bg-white/5 border border-stone-200 dark:border-white/10 rounded-xl focus:ring-2 focus:ring-[#800020]/20 focus:border-[#800020] outline-none transition-all text-sm font-semibold text-stone-900 dark:text-white">
-                            @endif
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-        </div>
-
-        {{-- ===== ABOUT TAB ===== --}}
-        <div class="tab-content hidden" id="tab-about">
-            <div class="bg-white dark:bg-slate-900 rounded-2xl border border-stone-200 dark:border-white/10 overflow-hidden">
-                <div class="px-8 py-5 border-b border-stone-200 dark:border-white/10 bg-gradient-to-r from-blue-500/5 to-transparent flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-600 flex items-center justify-center">
-                        <span class="material-symbols-outlined">info</span>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-stone-900 dark:text-white">About / Tentang Kami</h3>
-                        <p class="text-xs text-stone-500">Heading, gambar tim, dan tahun pengalaman di seksi "Mengapa Memilih Kami".</p>
-                    </div>
-                </div>
-                <div class="p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-                    @foreach($settings['about'] as $setting)
-                        @php $label = str_replace(['about_', '_'], ['', ' '], $setting->key); @endphp
-                        <div class="{{ $setting->key === 'about_image' ? 'md:col-span-2' : '' }}">
-                            <label class="block text-xs font-bold text-stone-600 dark:text-stone-400 mb-2 uppercase tracking-wider">{{ $label }}</label>
-                            @if($setting->key === 'about_image')
-                                <div class="space-y-4">
-                                    <div class="drop-zone relative group cursor-pointer" data-target="about_image">
-                                        <input type="file" name="about_image_file" class="hidden file-input" accept="image/*">
-                                        <div class="drop-zone-display border-2 border-dashed border-stone-200 dark:border-white/10 rounded-2xl p-6 transition-all flex flex-col items-center justify-center min-h-[150px] text-center bg-stone-50 dark:bg-white/5">
-                                            @php
-                                                $aboutImg = $setting->value;
-                                                $aboutPreview = $aboutImg ? (str_starts_with($aboutImg, 'http') ? $aboutImg : asset('storage/' . $aboutImg)) : null;
-                                            @endphp
-                                            <div class="preview-container {{ $aboutPreview ? '' : 'hidden' }} absolute inset-0 rounded-2xl overflow-hidden">
-                                                <img src="{{ $aboutPreview }}" class="img-preview w-full h-full object-cover">
-                                                <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                                    <span class="bg-white text-stone-900 font-bold px-3 py-1 rounded-lg text-[10px] uppercase">Ganti Gambar</span>
-                                                </div>
-                                            </div>
-                                            <div class="drop-text {{ $aboutPreview ? 'hidden' : '' }} space-y-2">
-                                                <span class="material-symbols-outlined text-stone-400 text-3xl">group</span>
-                                                <p class="text-[10px] font-bold text-stone-500 uppercase">Tarik gambar tim atau klik disini</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <input type="text" name="{{ $setting->key }}" value="{{ $setting->value }}" class="url-input w-full px-4 py-2 bg-stone-50 dark:bg-white/5 border border-stone-200 dark:border-white/10 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-[10px] text-stone-400 font-mono" placeholder="Atau tempel URL gambar di sini...">
-                                </div>
-                            @else
-                                <input type="text" name="{{ $setting->key }}" value="{{ $setting->value }}" class="w-full px-4 py-3 bg-stone-50 dark:bg-white/5 border border-stone-200 dark:border-white/10 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-sm font-semibold text-stone-900 dark:text-white">
-                            @endif
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-        </div>
-
-        {{-- ===== GENERAL TAB ===== --}}
-        <div class="tab-content hidden" id="tab-general">
-            <div class="bg-white dark:bg-slate-900 rounded-2xl border border-stone-200 dark:border-white/10 overflow-hidden">
-                <div class="px-8 py-5 border-b border-stone-200 dark:border-white/10 flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-500 flex items-center justify-center">
-                        <span class="material-symbols-outlined">settings</span>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-stone-900 dark:text-white">Identitas & Meta Data</h3>
-                        <p class="text-xs text-stone-500">Logo perusahaan, favicon, dan deskripsi umum.</p>
-                    </div>
-                </div>
-                <div class="p-8">
-                    {{-- Branding Section --}}
-                    <div class="mb-10 p-6 bg-stone-50 dark:bg-white/5 rounded-2xl border border-stone-200 dark:border-white/10">
-                        <h4 class="text-xs font-black text-stone-900 dark:text-white uppercase tracking-[0.2em] mb-6">Logo & Favicon</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            {{-- Logo --}}
-                            <div class="space-y-4">
-                                <label class="block text-xs font-bold text-stone-500 uppercase tracking-wider">Site Logo</label>
-                                <div class="drop-zone relative group cursor-pointer" data-target="company_logo">
-                                    <input type="file" name="company_logo" class="hidden file-input" accept="image/*">
-                                    <div class="drop-zone-display border-2 border-dashed border-stone-200 dark:border-white/10 rounded-2xl p-6 transition-all flex flex-col items-center justify-center min-h-[120px] text-center bg-white dark:bg-slate-900">
-                                        @php
-                                            $logo = \App\Models\SiteSetting::where('key', 'company_logo')->first()?->value;
-                                            $logoPreview = $logo ? (str_starts_with($logo, 'http') ? $logo : asset('storage/' . $logo)) : null;
-                                        @endphp
-                                        <div class="preview-container {{ $logoPreview ? '' : 'hidden' }} absolute inset-0 rounded-2xl overflow-hidden flex items-center justify-center bg-stone-100 dark:bg-white/5">
-                                            <img src="{{ $logoPreview }}" class="img-preview max-h-[80%] max-w-[80%] object-contain">
-                                            <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                                <span class="bg-white text-stone-900 font-bold px-3 py-1 rounded-lg text-[10px] uppercase">Ganti Logo</span>
-                                            </div>
-                                        </div>
-                                        <div class="drop-text {{ $logoPreview ? 'hidden' : '' }} space-y-2">
-                                            <span class="material-symbols-outlined text-stone-400 text-3xl">image</span>
-                                            <p class="text-[10px] font-bold text-stone-500 uppercase">Tarik logo kesini</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <input type="text" name="company_logo_url" value="{{ $logo }}" class="url-input w-full px-4 py-2 bg-white dark:bg-white/5 border border-stone-200 dark:border-white/10 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all text-[10px] text-stone-400 font-mono" placeholder="Atau URL Logo...">
-                            </div>
-
-                            {{-- Favicon --}}
-                            <div class="space-y-4">
-                                <label class="block text-xs font-bold text-stone-500 uppercase tracking-wider">Site Favicon</label>
-                                <div class="drop-zone relative group cursor-pointer" data-target="company_favicon">
-                                    <input type="file" name="company_favicon" class="hidden file-input" accept="image/x-icon,image/png">
-                                    <div class="drop-zone-display border-2 border-dashed border-stone-200 dark:border-white/10 rounded-2xl p-6 transition-all flex flex-col items-center justify-center min-h-[120px] text-center bg-white dark:bg-slate-900">
-                                        @php
-                                            $favicon = \App\Models\SiteSetting::where('key', 'company_favicon')->first()?->value;
-                                            $faviconPreview = $favicon ? (str_starts_with($favicon, 'http') ? $favicon : asset('storage/' . $favicon)) : null;
-                                        @endphp
-                                        <div class="preview-container {{ $faviconPreview ? '' : 'hidden' }} absolute inset-0 rounded-2xl overflow-hidden flex items-center justify-center bg-stone-100 dark:bg-white/5">
-                                            <img src="{{ $faviconPreview }}" class="img-preview w-8 h-8 object-contain">
-                                            <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                                <span class="bg-white text-stone-900 font-bold px-3 py-1 rounded-lg text-[10px] uppercase">Ganti Favicon</span>
-                                            </div>
-                                        </div>
-                                        <div class="drop-text {{ $faviconPreview ? 'hidden' : '' }} space-y-2">
-                                            <span class="material-symbols-outlined text-stone-400 text-3xl">favicon</span>
-                                            <p class="text-[10px] font-bold text-stone-500 uppercase">Tarik favicon kesini</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <input type="text" name="company_favicon_url" value="{{ $favicon }}" class="url-input w-full px-4 py-2 bg-white dark:bg-white/5 border border-stone-200 dark:border-white/10 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all text-[10px] text-stone-400 font-mono" placeholder="Atau URL Favicon...">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        @foreach($settings['general'] as $setting)
-                            @php $label = str_replace(['company_', '_'], ['', ' '], $setting->key); @endphp
-                            <div class="{{ $setting->key == 'company_description' ? 'md:col-span-2' : '' }}">
-                                <label class="block text-xs font-bold text-stone-600 dark:text-stone-400 mb-2 uppercase tracking-wider">{{ $label }}</label>
-                                @if(strlen($setting->value) > 100 || $setting->key == 'company_description')
-                                    <textarea name="{{ $setting->key }}" rows="4" class="w-full px-4 py-3 bg-stone-50 dark:bg-white/5 border border-stone-200 dark:border-white/10 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all text-sm text-stone-900 dark:text-white resize-none">{{ $setting->value }}</textarea>
-                                @else
-                                    <input type="text" name="{{ $setting->key }}" value="{{ $setting->value }}" class="w-full px-4 py-3 bg-stone-50 dark:bg-white/5 border border-stone-200 dark:border-white/10 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all text-sm font-semibold text-stone-900 dark:text-white">
-                                @endif
-                            </div>
-                        @endforeach
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        {{-- ===== CONTACT TAB ===== --}}
-        <div class="tab-content hidden" id="tab-contact">
-            <div class="bg-white dark:bg-slate-900 rounded-2xl border border-stone-200 dark:border-white/10 overflow-hidden">
-                <div class="px-8 py-5 border-b border-stone-200 dark:border-white/10 flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-[#800020]/10 text-[#800020] flex items-center justify-center">
-                        <span class="material-symbols-outlined">call</span>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-stone-900 dark:text-white">Informasi Kontak</h3>
-                        <p class="text-xs text-stone-500">Alamat, telepon, email, dan WhatsApp yang tampil di landing page.</p>
-                    </div>
-                </div>
-                <div class="p-8 space-y-6">
-                    @foreach($settings['contact'] as $setting)
-                        @php $label = str_replace(['company_', '_'], ['', ' '], $setting->key); @endphp
-                        <div>
-                            <label class="block text-xs font-bold text-stone-600 dark:text-stone-400 mb-2 uppercase tracking-wider">{{ $label }}</label>
-                            <input type="text" name="{{ $setting->key }}" value="{{ $setting->value }}" class="w-full px-4 py-3 bg-stone-50 dark:bg-white/5 border border-stone-200 dark:border-white/10 rounded-xl focus:ring-2 focus:ring-[#800020]/20 focus:border-[#800020] outline-none transition-all text-sm font-semibold text-stone-900 dark:text-white">
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-        </div>
-
-        {{-- ===== SOCIAL TAB ===== --}}
-        <div class="tab-content hidden" id="tab-social">
-            <div class="bg-white dark:bg-slate-900 rounded-2xl border border-stone-200 dark:border-white/10 overflow-hidden">
-                <div class="px-8 py-5 border-b border-stone-200 dark:border-white/10 flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center">
-                        <span class="material-symbols-outlined">share</span>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-stone-900 dark:text-white">Media Sosial</h3>
-                        <p class="text-xs text-stone-500">Link social media yang tampil di footer landing page.</p>
-                    </div>
-                </div>
-                <div class="p-8 space-y-6">
-                    @foreach($settings['social'] as $setting)
-                        @php $label = str_replace(['social_', '_'], ['', ' '], $setting->key); @endphp
-                        <div>
-                            <label class="block text-xs font-bold text-stone-600 dark:text-stone-400 mb-2 uppercase tracking-wider">{{ $label }}</label>
-                            <input type="url" name="{{ $setting->key }}" value="{{ $setting->value }}" class="w-full px-4 py-3 bg-stone-50 dark:bg-white/5 border border-stone-200 dark:border-white/10 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-sm text-stone-900 dark:text-white" placeholder="https://...">
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-        </div>
-
-        {{-- ===== STATS TAB ===== --}}
-        <div class="tab-content hidden" id="tab-stats">
-            <div class="bg-white dark:bg-slate-900 rounded-2xl border border-stone-200 dark:border-white/10 overflow-hidden">
-                <div class="px-8 py-5 border-b border-stone-200 dark:border-white/10 flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center">
-                        <span class="material-symbols-outlined">monitoring</span>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-stone-900 dark:text-white">Statistik Perusahaan</h3>
-                        <p class="text-xs text-stone-500">Angka-angka pencapaian yang tampil di seksi About landing page.</p>
-                    </div>
-                </div>
-                <div class="p-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                    @foreach($settings['stats'] as $setting)
-                        @php $label = str_replace(['stat_', '_'], ['', ' '], $setting->key); @endphp
-                        <div class="text-center">
-                            <label class="block text-xs font-bold text-stone-600 dark:text-stone-400 mb-2 uppercase tracking-wider">{{ $label }}</label>
-                            <input type="text" name="{{ $setting->key }}" value="{{ $setting->value }}" class="w-full px-4 py-3 bg-stone-50 dark:bg-white/5 border border-stone-200 dark:border-white/10 rounded-xl focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all text-lg font-black text-stone-900 dark:text-white text-center">
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-        </div>
-
-        {{-- ===== FEATURES/KEUNGGULAN TAB ===== --}}
-        <div class="tab-content hidden" id="tab-features">
-            <div class="bg-white dark:bg-slate-900 rounded-2xl border border-stone-200 dark:border-white/10 overflow-hidden">
-                <div class="px-8 py-5 border-b border-stone-200 dark:border-white/10 flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-green-500/10 text-green-600 flex items-center justify-center">
-                        <span class="material-symbols-outlined">star</span>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-stone-900 dark:text-white">Keunggulan / Why Choose Us</h3>
-                        <p class="text-xs text-stone-500">3 alasan utama yang tampil di seksi "Mengapa Memilih Kami".</p>
-                    </div>
-                </div>
-                <div class="p-8 space-y-8">
-                    @for($i = 1; $i <= 3; $i++)
-                        @php
-                            $titleSetting = $settings['features']->firstWhere('key', "why_title_{$i}");
-                            $descSetting = $settings['features']->firstWhere('key', "why_desc_{$i}");
-                        @endphp
-                        @if($titleSetting && $descSetting)
-                        <div class="p-6 bg-stone-50 dark:bg-white/5 rounded-xl border border-stone-200 dark:border-white/10">
-                            <div class="flex items-center gap-3 mb-4">
-                                <div class="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center font-bold text-sm">{{ $i }}</div>
-                                <span class="text-sm font-bold text-stone-700 dark:text-stone-300">Keunggulan #{{ $i }}</span>
-                            </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-xs font-bold text-stone-500 mb-2 uppercase tracking-wider">Judul</label>
-                                    <input type="text" name="why_title_{{ $i }}" value="{{ $titleSetting->value }}" class="w-full px-4 py-3 bg-white dark:bg-white/5 border border-stone-200 dark:border-white/10 rounded-xl focus:ring-2 focus:ring-green-500/20 focus:border-green-500 outline-none transition-all text-sm font-semibold text-stone-900 dark:text-white">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-bold text-stone-500 mb-2 uppercase tracking-wider">Deskripsi</label>
-                                    <input type="text" name="why_desc_{{ $i }}" value="{{ $descSetting->value }}" class="w-full px-4 py-3 bg-white dark:bg-white/5 border border-stone-200 dark:border-white/10 rounded-xl focus:ring-2 focus:ring-green-500/20 focus:border-green-500 outline-none transition-all text-sm text-stone-900 dark:text-white">
+                                <div class="drop-text {{ $aboutPreview ? 'hidden' : '' }}" style="pointer-events:none;">
+                                    <span class="material-symbols-outlined" style="font-size:28px;color:var(--text-faint);display:block;margin-bottom:6px;">group</span>
+                                    <p style="font-size:11px;color:var(--text-faint);">Upload gambar tim</p>
                                 </div>
                             </div>
+                            <input type="text" name="{{ $setting->key }}" value="{{ $setting->value }}" class="admin-input url-input" placeholder="Atau URL gambar..." style="font-size:11px;font-family:monospace;">
                         </div>
+                    @else
+                        <input type="text" name="{{ $setting->key }}" value="{{ $setting->value }}" class="admin-input">
+                    @endif
+                </div>
+            @endforeach
+        </div>
+    </div>
+
+    {{-- ===== GENERAL TAB ===== --}}
+    <div class="tab-panel admin-card hidden" id="tab-general">
+        <div style="padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;">
+            <span class="material-symbols-outlined" style="color:var(--teal);font-size:20px">tune</span>
+            <div>
+                <div style="font-size:14px;font-weight:700;color:#fff;">Identitas & General</div>
+                <div style="font-size:11px;color:var(--text-faint);">Logo, favicon, dan informasi umum perusahaan.</div>
+            </div>
+        </div>
+        <div style="padding:24px;">
+            {{-- Logo & Favicon --}}
+            <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px;">
+                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.15em;color:var(--teal);margin-bottom:16px;">Logo & Favicon</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+                    {{-- Logo --}}
+                    <div>
+                        <label class="admin-label">Logo Perusahaan</label>
+                        <div class="drop-zone" data-target="company_logo" style="border:2px dashed var(--border);border-radius:12px;padding:16px;cursor:pointer;position:relative;min-height:120px;display:flex;align-items:center;justify-content:center;text-align:center;margin-bottom:10px;">
+                            <input type="file" name="company_logo" class="hidden file-input" accept="image/*">
+                            @php
+                                $logo = \App\Models\SiteSetting::where('key', 'company_logo')->first()?->value;
+                                $logoPreview = $logo ? (str_starts_with($logo, 'http') ? $logo : asset('storage/' . $logo)) : null;
+                            @endphp
+                            <div class="preview-container {{ $logoPreview ? '' : 'hidden' }}" style="position:absolute;inset:0;border-radius:10px;overflow:hidden;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.03);">
+                                <img src="{{ $logoPreview }}" class="img-preview" style="max-height:70%;max-width:70%;object-fit:contain;">
+                            </div>
+                            <div class="drop-text {{ $logoPreview ? 'hidden' : '' }}" style="pointer-events:none;">
+                                <span class="material-symbols-outlined" style="font-size:24px;color:var(--text-faint);display:block;margin-bottom:4px;">image</span>
+                                <p style="font-size:10px;color:var(--text-faint);">Upload Logo</p>
+                            </div>
+                        </div>
+                        <input type="text" name="company_logo_url" value="{{ $logo }}" class="admin-input url-input" placeholder="Atau URL logo..." style="font-size:11px;font-family:monospace;">
+                    </div>
+
+                    {{-- Favicon --}}
+                    <div>
+                        <label class="admin-label">Favicon</label>
+                        <div class="drop-zone" data-target="company_favicon" style="border:2px dashed var(--border);border-radius:12px;padding:16px;cursor:pointer;position:relative;min-height:120px;display:flex;align-items:center;justify-content:center;text-align:center;margin-bottom:10px;">
+                            <input type="file" name="company_favicon" class="hidden file-input" accept="image/x-icon,image/png">
+                            @php
+                                $favicon = \App\Models\SiteSetting::where('key', 'company_favicon')->first()?->value;
+                                $faviconPreview = $favicon ? (str_starts_with($favicon, 'http') ? $favicon : asset('storage/' . $favicon)) : null;
+                            @endphp
+                            <div class="preview-container {{ $faviconPreview ? '' : 'hidden' }}" style="position:absolute;inset:0;border-radius:10px;overflow:hidden;display:flex;align-items:center;justify-content:center;">
+                                <img src="{{ $faviconPreview }}" class="img-preview" style="width:32px;height:32px;object-fit:contain;">
+                            </div>
+                            <div class="drop-text {{ $faviconPreview ? 'hidden' : '' }}" style="pointer-events:none;">
+                                <span class="material-symbols-outlined" style="font-size:24px;color:var(--text-faint);display:block;margin-bottom:4px;">favicon</span>
+                                <p style="font-size:10px;color:var(--text-faint);">Upload Favicon</p>
+                            </div>
+                        </div>
+                        <input type="text" name="company_favicon_url" value="{{ $favicon }}" class="admin-input url-input" placeholder="Atau URL favicon..." style="font-size:11px;font-family:monospace;">
+                    </div>
+                </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                @foreach($settings['general'] as $setting)
+                    @php $label = ucwords(str_replace(['company_', '_'], ['', ' '], $setting->key)); @endphp
+                    <div style="{{ $setting->key === 'company_description' ? 'grid-column:1/-1;' : '' }}">
+                        <label class="admin-label">{{ $label }}</label>
+                        @if(strlen($setting->value) > 100 || $setting->key === 'company_description')
+                            <textarea name="{{ $setting->key }}" rows="4" class="admin-input" style="resize:none;">{{ $setting->value }}</textarea>
+                        @else
+                            <input type="text" name="{{ $setting->key }}" value="{{ $setting->value }}" class="admin-input">
                         @endif
-                    @endfor
-                </div>
+                    </div>
+                @endforeach
             </div>
         </div>
+    </div>
 
-        {{-- ===== FOOTER TAB ===== --}}
-        <div class="tab-content hidden" id="tab-footer">
-            <div class="bg-white dark:bg-slate-900 rounded-2xl border border-stone-200 dark:border-white/10 overflow-hidden">
-                <div class="px-8 py-5 border-b border-stone-200 dark:border-white/10 flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-stone-500/10 text-stone-600 flex items-center justify-center">
-                        <span class="material-symbols-outlined">bottom_navigation</span>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-stone-900 dark:text-white">Footer</h3>
-                        <p class="text-xs text-stone-500">Deskripsi perusahaan dan copyright text di bagian bawah landing page.</p>
-                    </div>
+    {{-- ===== CONTACT TAB ===== --}}
+    <div class="tab-panel admin-card hidden" id="tab-contact">
+        <div style="padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;">
+            <span class="material-symbols-outlined" style="color:var(--teal);font-size:20px">call</span>
+            <div>
+                <div style="font-size:14px;font-weight:700;color:#fff;">Informasi Kontak</div>
+                <div style="font-size:11px;color:var(--text-faint);">Alamat, telepon, email, dan WhatsApp.</div>
+            </div>
+        </div>
+        <div style="padding:24px;display:flex;flex-direction:column;gap:16px;">
+            @foreach($settings['contact'] as $setting)
+                @php $label = ucwords(str_replace(['company_', '_'], ['', ' '], $setting->key)); @endphp
+                <div>
+                    <label class="admin-label">{{ $label }}</label>
+                    <input type="text" name="{{ $setting->key }}" value="{{ $setting->value }}" class="admin-input">
                 </div>
-                <div class="p-8 space-y-6">
-                    @foreach($settings['footer'] as $setting)
-                        @php $label = str_replace(['footer_', '_'], ['', ' '], $setting->key); @endphp
+            @endforeach
+        </div>
+    </div>
+
+    {{-- ===== SOCIAL TAB ===== --}}
+    <div class="tab-panel admin-card hidden" id="tab-social">
+        <div style="padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;">
+            <span class="material-symbols-outlined" style="color:var(--teal);font-size:20px">share</span>
+            <div>
+                <div style="font-size:14px;font-weight:700;color:#fff;">Media Sosial</div>
+                <div style="font-size:11px;color:var(--text-faint);">Link media sosial yang tampil di footer.</div>
+            </div>
+        </div>
+        <div style="padding:24px;display:flex;flex-direction:column;gap:16px;">
+            @foreach($settings['social'] as $setting)
+                @php $label = ucwords(str_replace(['social_', '_'], ['', ' '], $setting->key)); @endphp
+                <div>
+                    <label class="admin-label">{{ $label }}</label>
+                    <input type="url" name="{{ $setting->key }}" value="{{ $setting->value }}" class="admin-input" placeholder="https://...">
+                </div>
+            @endforeach
+        </div>
+    </div>
+
+    {{-- ===== STATS TAB ===== --}}
+    <div class="tab-panel admin-card hidden" id="tab-stats">
+        <div style="padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;">
+            <span class="material-symbols-outlined" style="color:var(--teal);font-size:20px">monitoring</span>
+            <div>
+                <div style="font-size:14px;font-weight:700;color:#fff;">Statistik Perusahaan</div>
+                <div style="font-size:11px;color:var(--text-faint);">Angka pencapaian di seksi About.</div>
+            </div>
+        </div>
+        <div style="padding:24px;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;">
+            @foreach($settings['stats'] as $setting)
+                @php $label = ucwords(str_replace(['stat_', '_'], ['', ' '], $setting->key)); @endphp
+                <div style="text-align:center;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:12px;padding:20px;">
+                    <label class="admin-label" style="text-align:center;display:block;">{{ $label }}</label>
+                    <input type="text" name="{{ $setting->key }}" value="{{ $setting->value }}" class="admin-input" style="text-align:center;font-size:22px;font-weight:800;">
+                </div>
+            @endforeach
+        </div>
+    </div>
+
+    {{-- ===== FEATURES TAB ===== --}}
+    <div class="tab-panel admin-card hidden" id="tab-features">
+        <div style="padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;">
+            <span class="material-symbols-outlined" style="color:var(--teal);font-size:20px">star</span>
+            <div>
+                <div style="font-size:14px;font-weight:700;color:#fff;">Keunggulan / Why Choose Us</div>
+                <div style="font-size:11px;color:var(--text-faint);">3 alasan utama di seksi tentang kami.</div>
+            </div>
+        </div>
+        <div style="padding:24px;display:flex;flex-direction:column;gap:16px;">
+            @for($i = 1; $i <= 3; $i++)
+                @php
+                    $titleSetting = $settings['features']->firstWhere('key', "why_title_{$i}");
+                    $descSetting  = $settings['features']->firstWhere('key', "why_desc_{$i}");
+                @endphp
+                @if($titleSetting && $descSetting)
+                <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:12px;padding:18px;">
+                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+                        <div style="width:28px;height:28px;border-radius:8px;background:var(--teal-dim);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--teal);">{{ $i }}</div>
+                        <span style="font-size:12px;font-weight:600;color:var(--text-dim);">Keunggulan #{{ $i }}</span>
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 2fr;gap:12px;">
                         <div>
-                            <label class="block text-xs font-bold text-stone-600 dark:text-stone-400 mb-2 uppercase tracking-wider">{{ $label }}</label>
-                            @if($setting->key === 'footer_description')
-                                <textarea name="{{ $setting->key }}" rows="3" class="w-full px-4 py-3 bg-stone-50 dark:bg-white/5 border border-stone-200 dark:border-white/10 rounded-xl focus:ring-2 focus:ring-stone-500/20 focus:border-stone-500 outline-none transition-all text-sm text-stone-900 dark:text-white resize-none">{{ $setting->value }}</textarea>
-                            @else
-                                <input type="text" name="{{ $setting->key }}" value="{{ $setting->value }}" class="w-full px-4 py-3 bg-stone-50 dark:bg-white/5 border border-stone-200 dark:border-white/10 rounded-xl focus:ring-2 focus:ring-stone-500/20 focus:border-stone-500 outline-none transition-all text-sm font-semibold text-stone-900 dark:text-white">
-                            @endif
+                            <label class="admin-label">Judul</label>
+                            <input type="text" name="why_title_{{ $i }}" value="{{ $titleSetting->value }}" class="admin-input">
                         </div>
-                    @endforeach
-                </div>
-            </div>
-        </div>
-
-        {{-- ===== WEBHOOK TAB ===== --}}
-        <div class="tab-content hidden" id="tab-webhook">
-            <div class="bg-white dark:bg-slate-900 rounded-2xl border border-stone-200 dark:border-white/10 overflow-hidden">
-                <div class="px-8 py-5 border-b border-stone-200 dark:border-white/10 flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center">
-                        <span class="material-symbols-outlined">hub</span>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-stone-900 dark:text-white">Webhook (n8n)</h3>
-                        <p class="text-xs text-stone-500">Endpoint untuk meneruskan data kontak masuk secara real-time.</p>
-                    </div>
-                </div>
-                <div class="p-8 space-y-6">
-                    @foreach($settings['webhook'] as $setting)
                         <div>
-                            <label class="block text-xs font-bold text-stone-600 dark:text-stone-400 mb-2 uppercase tracking-wider">Webhook Endpoint URL</label>
-                            <input type="url" name="{{ $setting->key }}" value="{{ $setting->value }}" class="w-full px-4 py-3 bg-stone-50 dark:bg-white/5 border border-stone-200 dark:border-white/10 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all text-sm font-mono text-stone-900 dark:text-white" placeholder="https://n8n.domain.id/...">
-                            <div class="mt-4 flex items-start gap-3 p-4 bg-amber-50 dark:bg-amber-900/10 border border-amber-200 dark:border-amber-500/20 rounded-xl">
-                                <span class="material-symbols-outlined text-amber-500 text-base mt-0.5">warning</span>
-                                <p class="text-xs text-amber-700 dark:text-amber-400 leading-relaxed">Data dari form kontak publik akan diteruskan ke endpoint ini secara real-time.</p>
-                            </div>
+                            <label class="admin-label">Deskripsi</label>
+                            <input type="text" name="why_desc_{{ $i }}" value="{{ $descSetting->value }}" class="admin-input">
                         </div>
-                    @endforeach
+                    </div>
                 </div>
+                @endif
+            @endfor
+        </div>
+    </div>
+
+    {{-- ===== FOOTER TAB ===== --}}
+    <div class="tab-panel admin-card hidden" id="tab-footer">
+        <div style="padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;">
+            <span class="material-symbols-outlined" style="color:var(--teal);font-size:20px">bottom_navigation</span>
+            <div>
+                <div style="font-size:14px;font-weight:700;color:#fff;">Footer</div>
+                <div style="font-size:11px;color:var(--text-faint);">Teks deskripsi dan copyright di footer.</div>
             </div>
         </div>
-
-        {{-- Floating Save Button --}}
-        <div class="fixed bottom-8 left-1/2 -translate-x-1/2 lg:ml-32 z-[100]">
-            <button type="submit" class="bg-[#800020] hover:bg-[#600018] text-white font-bold px-10 py-4 rounded-2xl shadow-2xl shadow-[#800020]/30 flex items-center gap-3 transition-all hover:-translate-y-1">
-                <span class="material-symbols-outlined">save</span>
-                <span class="uppercase tracking-widest text-xs">Simpan Semua Perubahan</span>
-            </button>
+        <div style="padding:24px;display:flex;flex-direction:column;gap:16px;">
+            @foreach($settings['footer'] as $setting)
+                @php $label = ucwords(str_replace(['footer_', '_'], ['', ' '], $setting->key)); @endphp
+                <div>
+                    <label class="admin-label">{{ $label }}</label>
+                    @if($setting->key === 'footer_description')
+                        <textarea name="{{ $setting->key }}" rows="3" class="admin-input" style="resize:none;">{{ $setting->value }}</textarea>
+                    @else
+                        <input type="text" name="{{ $setting->key }}" value="{{ $setting->value }}" class="admin-input">
+                    @endif
+                </div>
+            @endforeach
         </div>
-    </form>
-</div>
+    </div>
+
+    {{-- ===== WEBHOOK TAB ===== --}}
+    <div class="tab-panel admin-card hidden" id="tab-webhook">
+        <div style="padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;">
+            <span class="material-symbols-outlined" style="color:var(--teal);font-size:20px">hub</span>
+            <div>
+                <div style="font-size:14px;font-weight:700;color:#fff;">Webhook (n8n)</div>
+                <div style="font-size:11px;color:var(--text-faint);">Endpoint penerus data kontak masuk.</div>
+            </div>
+        </div>
+        <div style="padding:24px;">
+            @foreach($settings['webhook'] as $setting)
+            <div>
+                <label class="admin-label">Webhook Endpoint URL</label>
+                <input type="url" name="{{ $setting->key }}" value="{{ $setting->value }}" class="admin-input" placeholder="https://n8n.domain.id/webhook/..." style="font-family:monospace;">
+                <div style="margin-top:10px;display:flex;align-items:flex-start;gap:10px;padding:12px 14px;background:rgba(251,191,36,0.06);border:1px solid rgba(251,191,36,0.2);border-radius:10px;">
+                    <span class="material-symbols-outlined" style="color:#FBBF24;font-size:16px;margin-top:1px;">warning</span>
+                    <p style="font-size:12px;color:rgba(251,191,36,0.8);line-height:1.5;margin:0;">Data dari form kontak publik akan diteruskan ke endpoint ini secara real-time.</p>
+                </div>
+            </div>
+            @endforeach
+        </div>
+    </div>
+
+    {{-- Floating Save --}}
+    <div style="position:fixed;bottom:24px;right:24px;z-index:150;">
+        <button type="submit" class="btn-primary" style="padding:12px 24px;font-size:13px;box-shadow:0 8px 32px rgba(45,212,191,0.35);">
+            <span class="material-symbols-outlined" style="font-size:18px">save</span>
+            Simpan Semua Perubahan
+        </button>
+    </div>
+</form>
 
 <style>
-    .tab-btn { color: #6b7280; background: transparent; }
-    .tab-btn.active { color: #800020; background: white; border: 1px solid #e5e7eb; border-bottom-color: white; margin-bottom: -1px; position: relative; z-index: 1; }
-    .dark {
-        --tw-bg-opacity: 1;
-        background-color: rgb(15 23 42 / var(--tw-bg-opacity));
-    }
-    .dark .tab-btn.active { background: #0f172a; border-color: rgba(255,255,255,0.1); border-bottom-color: #0f172a; color: #fed65b; }
-    .tab-btn:hover:not(.active) { color: #800020; background: rgba(128,0,32,0.05); }
-
-    .drop-zone.drag-over .drop-zone-display {
-        border-color: #800020;
-        background-color: rgba(128,0,32,0.05);
-    }
+.tab-panel.hidden { display: none !important; }
+.drop-zone:hover { border-color: var(--teal) !important; }
 </style>
 
 <script>
-    function showTab(tabName) {
-        document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-        document.getElementById('tab-' + tabName).classList.remove('hidden');
-        document.querySelector('[data-tab="' + tabName + '"]').classList.add('active');
+    // ── Tabs ──
+    const tabIds = ['hero','about','general','contact','social','stats','features','footer','webhook'];
+
+    function showTab(id) {
+        tabIds.forEach(t => {
+            const panel = document.getElementById('tab-' + t);
+            const btn   = document.getElementById('tab-btn-' + t);
+            if (t === id) {
+                panel.classList.remove('hidden');
+                btn.style.background = 'var(--teal-dim)';
+                btn.style.color = 'var(--teal)';
+                btn.style.borderColor = 'var(--border-active)';
+            } else {
+                panel.classList.add('hidden');
+                btn.style.background = 'none';
+                btn.style.color = 'var(--text-dim)';
+                btn.style.borderColor = 'transparent';
+            }
+        });
     }
 
-    // Drag and Drop Logic for multiple zones
-    document.querySelectorAll('.drop-zone').forEach(dropZone => {
-        const input = dropZone.querySelector('.file-input');
-        const container = dropZone.querySelector('.preview-container');
-        const preview = dropZone.querySelector('.img-preview');
-        const text = dropZone.querySelector('.drop-text');
-        const urlInput = dropZone.closest('.space-y-4').querySelector('.url-input');
+    // Init first tab
+    document.addEventListener('DOMContentLoaded', () => showTab('hero'));
 
-        dropZone.addEventListener('click', () => input.click());
+    // ── Drop zones ──
+    document.querySelectorAll('.drop-zone').forEach(zone => {
+        const input = zone.querySelector('.file-input');
+        const container = zone.querySelector('.preview-container');
+        const preview = zone.querySelector('.img-preview');
+        const text = zone.querySelector('.drop-text');
+        const urlInput = zone.closest('div').querySelector('.url-input');
 
-        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(name => {
-            dropZone.addEventListener(name, e => {
-                e.preventDefault();
-                e.stopPropagation();
-            });
+        zone.addEventListener('click', () => input.click());
+
+        ['dragenter','dragover','dragleave','drop'].forEach(n => {
+            zone.addEventListener(n, e => { e.preventDefault(); e.stopPropagation(); });
         });
 
-        ['dragenter', 'dragover'].forEach(name => {
-            dropZone.addEventListener(name, () => dropZone.classList.add('drag-over'));
-        });
+        ['dragenter','dragover'].forEach(n => zone.addEventListener(n, () => { zone.style.borderColor = 'var(--teal)'; }));
+        ['dragleave','drop'].forEach(n => zone.addEventListener(n, () => { zone.style.borderColor = 'var(--border)'; }));
 
-        ['dragleave', 'drop'].forEach(name => {
-            dropZone.addEventListener(name, () => dropZone.classList.remove('drag-over'));
-        });
-
-        dropZone.addEventListener('drop', e => {
+        zone.addEventListener('drop', e => {
             const files = e.dataTransfer.files;
-            if (files.length) {
-                input.files = files;
-                handlePreview(files[0], preview, container, text, urlInput);
-            }
+            if (files.length) { input.files = files; handlePreview(files[0]); }
         });
 
         input.addEventListener('change', e => {
-            if (e.target.files.length) {
-                handlePreview(e.target.files[0], preview, container, text, urlInput);
-            }
+            if (e.target.files.length) handlePreview(e.target.files[0]);
         });
 
-        if(urlInput) {
+        if (urlInput) {
             urlInput.addEventListener('input', e => {
-                if(e.target.value.startsWith('http')) {
+                if (e.target.value.startsWith('http')) {
                     preview.src = e.target.value;
                     container.classList.remove('hidden');
-                    text.classList.add('hidden');
+                    if (text) text.classList.add('hidden');
                     input.value = '';
                 }
             });
         }
-    });
 
-    function handlePreview(file, img, container, text, urlInput) {
-        if (file && file.type.startsWith('image/')) {
+        function handlePreview(file) {
+            if (!file.type.startsWith('image/')) return;
             const reader = new FileReader();
             reader.onload = e => {
-                img.src = e.target.result;
+                preview.src = e.target.result;
                 container.classList.remove('hidden');
-                text.classList.add('hidden');
+                if (text) text.classList.add('hidden');
                 if (urlInput) urlInput.value = '';
             };
             reader.readAsDataURL(file);
         }
-    }
+    });
 </script>
 @endsection

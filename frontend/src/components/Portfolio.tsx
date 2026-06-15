@@ -129,7 +129,7 @@ export default function Portfolio({ initialData }: { initialData?: any[] }) {
           style={{
             color: BG,
             background: GRADIENT,
-            boxShadow: "0 0 22px rgba(0,229,255,0.35)",
+            boxShadow: "0 0 22px rgba(45,212,191,0.35)",
           }}
         >
           Mulai Proyek
@@ -161,8 +161,7 @@ export default function Portfolio({ initialData }: { initialData?: any[] }) {
               <motion.div
                 key={proj.id || idx}
                 variants={fadeUp}
-                className="group flex-none snap-center sm:w-auto"
-                style={{ width: "85vw" }}
+                className="group flex-none snap-center w-[85vw] sm:w-auto"
               >
                 <div
                   className="h-full rounded-2xl p-5 transition-all duration-300 sm:p-6 group-hover:-translate-y-1"
@@ -171,8 +170,8 @@ export default function Portfolio({ initialData }: { initialData?: any[] }) {
                     border: `1px solid ${BORDER_SUBTLE}`,
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor = "rgba(0,229,255,0.25)";
-                    e.currentTarget.style.boxShadow = "0 8px 32px rgba(0,229,255,0.08)";
+                    e.currentTarget.style.borderColor = "rgba(45,212,191,0.25)";
+                    e.currentTarget.style.boxShadow = "0 8px 32px rgba(45,212,191,0.08)";
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.borderColor = BORDER_SUBTLE;
@@ -201,9 +200,9 @@ export default function Portfolio({ initialData }: { initialData?: any[] }) {
                     <span
                       className="rounded-full px-3 py-1 text-[10px] font-bold uppercase"
                       style={{
-                        background: "rgba(0,229,255,0.1)",
+                        background: "rgba(45,212,191,0.1)",
                         color: CYAN,
-                        border: "1px solid rgba(0,229,255,0.2)",
+                        border: "1px solid rgba(45,212,191,0.2)",
                       }}
                     >
                       {proj.category?.name || "Uncategorized"}

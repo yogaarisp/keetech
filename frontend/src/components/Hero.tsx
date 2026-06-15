@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { motion, Variants } from "framer-motion";
 import { useEffect, useState } from "react";
@@ -8,9 +8,9 @@ import { getImageUrl } from "@/lib/utils";
 const NAV_H = 72;
 const NAV_H_FLOAT = 58;
 const SCROLL_THRESHOLD = 80;
-const GRADIENT = "linear-gradient(90deg, #00E5FF 0%, #26FF5C 100%)";
-const BG = "#040B12";
-const BG_RGB = "4, 11, 18";
+const GRADIENT = "linear-gradient(90deg, #2DD4BF 0%, #34D399 100%)";
+const BG = "#01030D";
+const BG_RGB = "1, 3, 13";
 
 const fadeUp: Variants = {
   hidden: { opacity: 1, y: 14 },
@@ -97,28 +97,28 @@ function HeroBackground({ imageSrc }: { imageSrc: string }) {
       {/* Scene laptop ΓÇö background kanan, menyatu dengan header */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 overflow-hidden"
+        className="pointer-events-none absolute inset-0 overflow-hidden flex justify-center"
         style={{ background: BG }}
       >
-        <img
-          src={imageSrc}
-          alt=""
-          className="absolute top-1/2 -translate-y-1/2 select-none object-contain object-right
-            right-[-8%] h-[72%] w-auto min-w-[95%] max-w-none opacity-70
-            sm:right-[-4%] sm:h-[80%] sm:min-w-[80%] sm:opacity-85
-            lg:right-0 lg:h-[108%] lg:min-w-[58%] lg:max-w-[76%] lg:opacity-100"
-        />
-        {/* Gradasi kiri ΓÇö transisi halus ke area teks */}
+        <div className="relative w-full max-w-[1440px] h-full">
+          <img
+            src={imageSrc}
+            alt=""
+            className="absolute top-1/2 -translate-y-1/2 select-none object-contain object-right
+              right-[-4%] h-[72%] w-auto min-w-[95%] max-w-none opacity-70
+              sm:right-0 sm:h-[80%] sm:min-w-[80%] sm:opacity-85
+              lg:right-[clamp(24px,4vw,56px)] lg:h-[108%] lg:min-w-[58%] lg:max-w-[76%] lg:opacity-100"
+          />
+        </div>
+        {/* Gradasi kiri ΓÇö transisi halus ke area teks, plus atas/bawah/kanan agar blend dengan header/footer */}
         <div
           className="absolute inset-0"
           style={{
-            background: `linear-gradient(102deg,
-              ${BG} 0%,
-              ${BG} 26%,
-              rgba(${BG_RGB}, 0.98) 36%,
-              rgba(${BG_RGB}, 0.72) 48%,
-              rgba(${BG_RGB}, 0.28) 60%,
-              transparent 76%)`,
+            background: `
+              linear-gradient(102deg, ${BG} 0%, ${BG} 26%, rgba(${BG_RGB}, 0.98) 36%, rgba(${BG_RGB}, 0.72) 48%, rgba(${BG_RGB}, 0.28) 60%, transparent 76%),
+              linear-gradient(to bottom, ${BG} 0%, rgba(${BG_RGB}, 0.8) 10%, transparent 25%, transparent 75%, rgba(${BG_RGB}, 0.8) 90%, ${BG} 100%),
+              linear-gradient(to left, ${BG} -5%, transparent 20%)
+            `
           }}
         />
       </div>
@@ -129,7 +129,7 @@ function HeroBackground({ imageSrc }: { imageSrc: string }) {
         className="pointer-events-none absolute inset-0"
         style={{
           backgroundImage:
-            "radial-gradient(circle, rgba(0,190,255,0.13) 1px, transparent 1px)",
+            "radial-gradient(circle, rgba(45,212,191,0.13) 1px, transparent 1px)",
           backgroundSize: "26px 26px",
         }}
       />
@@ -144,7 +144,7 @@ function HeroBackground({ imageSrc }: { imageSrc: string }) {
             top: "-5%",
             right: "-5%",
             background:
-              "radial-gradient(ellipse at 65% 45%, rgba(0,229,255,0.12) 0%, transparent 62%)",
+              "radial-gradient(ellipse at 65% 45%, rgba(45,212,191,0.12) 0%, transparent 62%)",
           }}
         />
         <div
@@ -155,7 +155,7 @@ function HeroBackground({ imageSrc }: { imageSrc: string }) {
             bottom: 0,
             right: "8%",
             background:
-              "radial-gradient(ellipse at bottom, rgba(0,229,255,0.08) 0%, transparent 70%)",
+              "radial-gradient(ellipse at bottom, rgba(45,212,191,0.08) 0%, transparent 70%)",
           }}
         />
       </div>
@@ -167,6 +167,13 @@ export default function Hero({ initialData }: { initialData?: any }) {
   const [hero, setHero] = useState(() => mergeHero(initialData?.hero));
   const [companyName, setCompanyName] = useState(
     initialData?.general?.company_name || "KeeTech"
+  );
+  const [companyLogo, setCompanyLogo] = useState<string | null>(
+    initialData?.general?.company_logo
+      ? (initialData.general.company_logo.startsWith("http")
+          ? initialData.general.company_logo
+          : `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/storage/${initialData.general.company_logo}`)
+      : null
   );
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -189,7 +196,11 @@ export default function Hero({ initialData }: { initialData?: any }) {
           const s = await getSettings();
           if (s?.hero) setHero(mergeHero(s.hero));
           if (s?.general?.company_name) setCompanyName(s.general.company_name);
-        } catch {}
+          if (s?.general?.company_logo) {
+            const logo = s.general.company_logo;
+            setCompanyLogo(logo.startsWith("http") ? logo : `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/storage/${logo}`);
+          }
+        } catch { }
       })();
     }
 
@@ -249,21 +260,37 @@ export default function Hero({ initialData }: { initialData?: any }) {
               animate={{ scale: scrolled ? 0.94 : 1 }}
               transition={{ duration: 0.35 }}
             >
-              <div
-                className="flex shrink-0 items-center justify-center rounded-full font-black text-white"
-                style={{
-                  width: scrolled ? 32 : 36,
-                  height: scrolled ? 32 : 36,
-                  background: GRADIENT,
-                  boxShadow: scrolled
-                    ? "0 0 12px rgba(0,229,255,0.35)"
-                    : "0 0 16px rgba(0,229,255,0.5)",
-                  fontSize: scrolled ? "0.9rem" : "1rem",
-                  transition: "all 0.35s ease",
-                }}
-              >
-                K
-              </div>
+              {companyLogo ? (
+                <div
+                  className="flex shrink-0 items-center justify-center rounded-full overflow-hidden"
+                  style={{
+                    width: scrolled ? 32 : 36,
+                    height: scrolled ? 32 : 36,
+                    boxShadow: scrolled
+                      ? "0 0 12px rgba(45,212,191,0.35)"
+                      : "0 0 16px rgba(45,212,191,0.5)",
+                    transition: "all 0.35s ease",
+                  }}
+                >
+                  <img src={companyLogo} alt={companyName} className="w-full h-full object-contain" />
+                </div>
+              ) : (
+                <div
+                  className="flex shrink-0 items-center justify-center rounded-full font-black text-white"
+                  style={{
+                    width: scrolled ? 32 : 36,
+                    height: scrolled ? 32 : 36,
+                    background: GRADIENT,
+                    boxShadow: scrolled
+                      ? "0 0 12px rgba(45,212,191,0.35)"
+                      : "0 0 16px rgba(45,212,191,0.5)",
+                    fontSize: scrolled ? "0.9rem" : "1rem",
+                    transition: "all 0.35s ease",
+                  }}
+                >
+                  K
+                </div>
+              )}
               <span
                 className="font-black tracking-tight text-white"
                 style={{
@@ -308,7 +335,7 @@ export default function Hero({ initialData }: { initialData?: any }) {
                       <motion.span
                         layoutId="hero-nav-line"
                         className="absolute -bottom-0.5 left-0 right-0 h-0.5 rounded-full"
-                        style={{ background: "#00E5FF" }}
+                        style={{ background: "#2DD4BF" }}
                         transition={{ type: "spring", stiffness: 380, damping: 32 }}
                       />
                     )}
@@ -323,8 +350,8 @@ export default function Hero({ initialData }: { initialData?: any }) {
                 className="hidden items-center gap-1.5 text-[0.875rem] font-bold md:inline-flex"
                 animate={{
                   boxShadow: scrolled
-                    ? "0 2px 12px rgba(0,229,255,0.25)"
-                    : "0 0 22px rgba(0,229,255,0.4)",
+                    ? "0 2px 12px rgba(45,212,191,0.25)"
+                    : "0 0 22px rgba(45,212,191,0.4)",
                 }}
                 transition={{ duration: 0.35 }}
                 style={{
@@ -457,7 +484,7 @@ export default function Hero({ initialData }: { initialData?: any }) {
                   fontSize: "0.875rem",
                   color: BG,
                   background: GRADIENT,
-                  boxShadow: "0 0 28px rgba(0,229,255,0.45)",
+                  boxShadow: "0 0 28px rgba(45,212,191,0.45)",
                 }}
               >
                 {hero.hero_cta_primary_text}
@@ -494,7 +521,7 @@ export default function Hero({ initialData }: { initialData?: any }) {
               {["Solusi Aman", "Terpercaya", "Profesional"].map((label, i) => (
                 <span key={label} className="inline-flex items-center">
                   {i > 0 && (
-                    <span className="mx-2.5 text-white/25 text-[13px]">ΓÇó</span>
+                    <span className="mx-2.5 text-white/25 text-[13px]"></span>
                   )}
                   <span
                     className="material-symbols-outlined mr-1"
@@ -511,7 +538,7 @@ export default function Hero({ initialData }: { initialData?: any }) {
                 </span>
               ))}
             </motion.div>
-            </motion.div>
+          </motion.div>
         </div>
       </section>
     </>

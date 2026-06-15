@@ -45,7 +45,7 @@ export function SectionBackground({ glow = "right" }: { glow?: GlowPosition }) {
       top: "-10%",
       right: "-8%",
       background:
-        "radial-gradient(ellipse at 65% 45%, rgba(0,229,255,0.1) 0%, transparent 62%)",
+        "radial-gradient(ellipse at 65% 45%, rgba(45,212,191,0.1) 0%, transparent 62%)",
     },
     left: {
       position: "absolute",
@@ -54,7 +54,7 @@ export function SectionBackground({ glow = "right" }: { glow?: GlowPosition }) {
       bottom: "-5%",
       left: "-8%",
       background:
-        "radial-gradient(ellipse at 30% 60%, rgba(0,229,255,0.08) 0%, transparent 65%)",
+        "radial-gradient(ellipse at 30% 60%, rgba(45,212,191,0.08) 0%, transparent 65%)",
     },
     center: {
       position: "absolute",
@@ -64,7 +64,7 @@ export function SectionBackground({ glow = "right" }: { glow?: GlowPosition }) {
       left: "50%",
       transform: "translate(-50%, -50%)",
       background:
-        "radial-gradient(ellipse at center, rgba(0,229,255,0.07) 0%, transparent 70%)",
+        "radial-gradient(ellipse at center, rgba(45,212,191,0.07) 0%, transparent 70%)",
     },
   };
 
@@ -75,7 +75,7 @@ export function SectionBackground({ glow = "right" }: { glow?: GlowPosition }) {
         className="pointer-events-none absolute inset-0"
         style={{
           backgroundImage:
-            "radial-gradient(circle, rgba(0,190,255,0.13) 1px, transparent 1px)",
+            "radial-gradient(circle, rgba(45,212,191,0.13) 1px, transparent 1px)",
           backgroundSize: "26px 26px",
         }}
       />
@@ -89,7 +89,7 @@ export function SectionBackground({ glow = "right" }: { glow?: GlowPosition }) {
             bottom: 0,
             right: glow === "left" ? "5%" : "15%",
             background:
-              "radial-gradient(ellipse at bottom, rgba(38,255,92,0.05) 0%, transparent 70%)",
+              "radial-gradient(ellipse at bottom, rgba(52,211,153,0.05) 0%, transparent 70%)",
           }}
         />
       </div>

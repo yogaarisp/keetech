@@ -1,76 +1,66 @@
 @extends('admin.layouts.app')
-
-@section('title', isset($portfolioCategory) ? 'Modify System Category' : 'Provision New Category')
-
+@section('title', isset($portfolioCategory) ? 'Edit Kategori' : 'Tambah Kategori')
 @section('content')
-<div class="glass-card overflow-hidden">
-    <div class="px-10 py-8 border-b border-slate-200 dark:border-white/5 bg-white dark:bg-white/[0.02] flex items-center gap-4">
-        <div class="w-12 h-12 rounded-2xl bg-gold-500/10 border border-gold-500/20 flex items-center justify-center text-gold-500">
-            <span class="material-symbols-outlined">{{ isset($portfolioCategory) ? 'settings_input_component' : 'schema' }}</span>
-        </div>
-        <div>
-            <h3 class="font-outfit font-bold text-lg text-slate-900 dark:text-white tracking-widest uppercase">{{ isset($portfolioCategory) ? 'Category Configuration' : 'Category Creation' }}</h3>
-            <p class="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider mt-1">Entity Engine: Klasifikasi Portofolio</p>
-        </div>
+
+<div style="margin-bottom:28px;">
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.18em;color:var(--teal);margin-bottom:6px;">
+        Konfigurasi Kategori
+    </div>
+    <h2 style="font-size:26px;font-weight:800;color:#fff;letter-spacing:-0.02em;margin:0 0 6px;">
+        {{ isset($portfolioCategory) ? 'Edit Kategori' : 'Tambah Kategori Baru' }}
+    </h2>
+    <p style="font-size:13px;color:var(--text-dim);margin:0;">
+        Kategori digunakan untuk mengelompokkan proyek di halaman portofolio.
+    </p>
+</div>
+
+<div class="admin-card">
+    <div style="padding:18px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;">
+        <span class="material-symbols-outlined" style="color:var(--teal);font-size:20px">{{ isset($portfolioCategory) ? 'edit_square' : 'add_circle' }}</span>
+        <div style="font-size:14px;font-weight:700;color:#fff;">Form Kategori Proyek</div>
     </div>
     
-    <form action="{{ isset($portfolioCategory) ? route('admin.portfolio-categories.update', $portfolioCategory) : route('admin.portfolio-categories.store') }}" method="POST" class="p-10 space-y-10">
+    <form action="{{ isset($portfolioCategory) ? route('admin.portfolio-categories.update', $portfolioCategory) : route('admin.portfolio-categories.store') }}" method="POST" style="padding:24px;">
         @csrf
         @if(isset($portfolioCategory)) @method('PUT') @endif
 
-        <div class="bg-maroon-700/5 border border-maroon-700/10 p-6 rounded-2xl flex items-start gap-4">
-            <span class="material-symbols-outlined text-maroon-500 mt-0.5">info</span>
+        <div style="background:rgba(45,212,191,0.06);border:1px solid rgba(45,212,191,0.2);padding:16px;border-radius:12px;display:flex;gap:12px;align-items:flex-start;margin-bottom:24px;">
+            <span class="material-symbols-outlined" style="color:var(--teal);font-size:20px;">info</span>
             <div>
-                <p class="text-[11px] font-bold text-maroon-400 uppercase tracking-widest">Slug Protocol</p>
-                <p class="text-xs font-medium text-slate-600 dark:text-slate-400 mt-1">Sistem akan secara otomatis me-generate SLUG URL berdasarkan nama kategori yang Anda inputkan untuk keperluan SEO Routing.</p>
+                <div style="font-size:12px;font-weight:700;color:var(--teal);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.1em;">Info Slug SEO</div>
+                <div style="font-size:12px;color:var(--text-dim);line-height:1.5;">Sistem akan otomatis membuat "Slug" URL yang ramah SEO berdasarkan Nama Kategori yang Anda masukkan.</div>
             </div>
         </div>
 
-        <div class="space-y-8">
+        <div style="display:flex;flex-direction:column;gap:20px;">
             <div>
-                <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-3 uppercase tracking-wider">Operational Category Name</label>
-                <input type="text" name="name" value="{{ old('name', $portfolioCategory->name ?? '') }}" required
-                    class="w-full px-6 py-5 bg-white border-slate-200 shadow-sm dark:bg-white/[0.03] dark:border-slate-200 dark:border-white/5 dark:shadow-none border border-slate-200 dark:border-white/5 rounded-2xl focus:ring-4 focus:ring-maroon-700/20 focus:border-maroon-700 outline-none transition-all font-bold text-slate-900 dark:text-white text-base tracking-tight placeholder:text-slate-700"
-                    placeholder="e.g. Enterprise Solutions">
-                @error('name')
-                    <p class="text-rose-500 text-[10px] mt-2 font-bold uppercase tracking-widest">{{ $message }}</p>
-                @enderror
+                <label class="admin-label">Nama Kategori</label>
+                <input type="text" name="name" value="{{ old('name', $portfolioCategory->name ?? '') }}" required class="admin-input" placeholder="Contoh: Web Development">
+                @error('name') <p style="color:var(--red);font-size:11px;margin-top:6px;">{{ $message }}</p> @enderror
             </div>
 
             <div>
-                <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-3 uppercase tracking-wider">Visual Assets (Media URL)</label>
-                <div class="relative">
-                    <span class="material-symbols-outlined absolute left-6 top-1/2 -translate-y-1/2 text-slate-600">image</span>
-                    <input type="text" name="image" value="{{ old('image', $portfolioCategory->image ?? '') }}"
-                        class="w-full pl-16 pr-6 py-5 bg-white border-slate-200 shadow-sm dark:bg-white/[0.03] dark:border-slate-200 dark:border-white/5 dark:shadow-none border border-slate-200 dark:border-white/5 rounded-2xl focus:ring-4 focus:ring-gold-500/20 focus:border-gold-500 outline-none transition-all font-bold text-slate-900 dark:text-white text-sm tracking-tight placeholder:text-slate-700"
-                        placeholder="https://images.unsplash.com/photo-...">
+                <label class="admin-label">URL Gambar Sampul (Opsional)</label>
+                <div style="position:relative;">
+                    <span class="material-symbols-outlined" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:18px;color:var(--text-faint);">image</span>
+                    <input type="url" name="image" value="{{ old('image', $portfolioCategory->image ?? '') }}" class="admin-input" placeholder="https://..." style="padding-left:42px;">
                 </div>
-                @error('image')
-                    <p class="text-rose-500 text-[10px] mt-2 font-bold uppercase tracking-widest">{{ $message }}</p>
-                @enderror
+                @error('image') <p style="color:var(--red);font-size:11px;margin-top:6px;">{{ $message }}</p> @enderror
             </div>
 
             <div>
-                <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-3 uppercase tracking-wider">Narrative Protocol (Description)</label>
-                <textarea name="description" rows="4"
-                    class="w-full px-6 py-5 bg-white border-slate-200 shadow-sm dark:bg-white/[0.03] dark:border-slate-200 dark:border-white/5 dark:shadow-none border border-slate-200 dark:border-white/5 rounded-2xl focus:ring-4 focus:ring-maroon-700/20 focus:border-maroon-700 outline-none transition-all font-bold text-slate-600 dark:text-slate-400 text-sm leading-relaxed placeholder:text-slate-700"
-                    placeholder="Describe the classification essence...">{{ old('description', $portfolioCategory->description ?? '') }}</textarea>
-                @error('description')
-                    <p class="text-rose-500 text-[10px] mt-2 font-bold uppercase tracking-widest">{{ $message }}</p>
-                @enderror
+                <label class="admin-label">Deskripsi Singkat</label>
+                <textarea name="description" rows="4" class="admin-input" style="resize:none;" placeholder="Jelaskan jenis portofolio dalam kategori ini...">{{ old('description', $portfolioCategory->description ?? '') }}</textarea>
+                @error('description') <p style="color:var(--red);font-size:11px;margin-top:6px;">{{ $message }}</p> @enderror
             </div>
         </div>
 
-        <div class="flex flex-wrap gap-4 pt-10 pb-4 border-t border-slate-200 dark:border-white/5">
-            <button type="submit" class="bg-slate-900 text-white dark:bg-white dark:text-black font-bold px-12 py-5 rounded-[24px] hover:bg-gold-500 transition-all shadow-2xl shadow-black/50 uppercase tracking-widest text-xs">
-                Sync Category
+        <div style="display:flex;gap:12px;margin-top:30px;padding-top:20px;border-top:1px solid var(--border);">
+            <button type="submit" class="btn-primary">
+                <span class="material-symbols-outlined" style="font-size:18px;">save</span> Simpan Kategori
             </button>
-            <a href="{{ route('admin.portfolio-categories.index') }}" class="bg-slate-100 dark:bg-white/5 text-slate-500 dark:text-slate-400 font-bold px-12 py-5 rounded-[24px] hover:bg-slate-200 dark:bg-white/10 hover:text-slate-900 dark:text-white transition-all uppercase tracking-widest text-xs border border-slate-200 dark:border-white/5">
-                Abort
-            </a>
+            <a href="{{ route('admin.portfolio-categories.index') }}" class="btn-secondary">Batal</a>
         </div>
     </form>
 </div>
 @endsection
-
-

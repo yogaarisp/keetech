@@ -1,87 +1,95 @@
 @extends('admin.layouts.app')
-
-@section('title', 'Category Architecture')
-
+@section('title', 'Kategori Proyek')
 @section('content')
-<div class="glass-card overflow-hidden">
-    <div class="px-8 py-8 border-b border-outline-variant/10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 md:gap-0 bg-white/50 dark:bg-slate-900/50">
-        <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-primary-container/10 text-primary flex items-center justify-center">
-                <span class="material-symbols-outlined">grid_view</span>
-            </div>
-            <div>
-                <h3 class="font-bold text-lg text-on-surface tracking-tight">Classification Engine</h3>
-                <p class="text-[10px] font-bold text-on-surface-variant/60 uppercase tracking-widest">Sovereign Data Taxonomy</p>
-            </div>
+
+<div style="margin-bottom:28px; display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap;">
+    <div>
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.18em;color:var(--teal);margin-bottom:6px;">
+            Sistem Klasifikasi
         </div>
-        <a href="{{ route('admin.portfolio-categories.create') }}" class="inline-flex items-center gap-2 bg-primary text-on-primary px-6 py-3 rounded-2xl font-bold hover:brightness-110 transition-all shadow-xl shadow-primary/20">
-            <span class="material-symbols-outlined text-sm">add_circle</span>
-            CREATE NEW
+        <h2 style="font-size:26px;font-weight:800;color:#fff;letter-spacing:-0.02em;margin:0 0 6px;">
+            Kategori Proyek
+        </h2>
+        <p style="font-size:13px;color:var(--text-dim);margin:0;">
+            Kelola kategori untuk mengelompokkan portofolio.
+        </p>
+    </div>
+    <div style="display:flex;gap:10px;">
+        <a href="{{ route('admin.portfolio-categories.create') }}" class="btn-primary">
+            <span class="material-symbols-outlined" style="font-size:16px">add</span>
+            Tambah Kategori
         </a>
     </div>
+</div>
 
-    <div class="overflow-x-auto p-4 lg:p-8">
-        <table class="w-full text-left border-separate border-spacing-y-4">
+<div class="admin-card" style="overflow:hidden;">
+    <div style="overflow-x:auto;">
+        <table class="admin-table">
             <thead>
-                <tr class="text-[10px] font-black text-on-surface-variant/50 uppercase tracking-[0.2em]">
-                    <th class="px-6 pb-2 whitespace-nowrap">Media</th>
-                    <th class="px-6 pb-2 whitespace-nowrap">Category Identity</th>
-                    <th class="px-6 pb-2 whitespace-nowrap text-center">System Slug</th>
-                    <th class="px-6 pb-2 text-center whitespace-nowrap">Asset Count</th>
-                    <th class="px-6 pb-2 text-right">Operational</th>
+                <tr>
+                    <th style="width: 100px;">Media</th>
+                    <th>Nama Kategori</th>
+                    <th style="text-align:center;">Slug</th>
+                    <th style="text-align:center;">Jumlah Proyek</th>
+                    <th style="text-align:right;">Aksi</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach($categories as $category)
-                    <tr class="group bg-surface-container-lowest border border-outline-variant/10 shadow-sm hover:shadow-md transition-all">
-                        <td class="px-6 py-5 rounded-l-2xl border-y border-l border-outline-variant/10">
-                            @if($category->image)
-                                <div class="relative w-16 h-12 overflow-hidden rounded-xl border border-outline-variant/20 shadow-inner">
-                                    <img src="{{ $category->image }}" alt="{{ $category->name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                                </div>
-                            @else
-                                <div class="w-16 h-12 bg-surface-container rounded-xl flex items-center justify-center border border-outline-variant/10 text-on-surface-variant/50">
-                                    <span class="material-symbols-outlined text-sm">image_not_supported</span>
-                                </div>
-                            @endif
-                        </td>
-                        <td class="px-6 py-5 border-y border-outline-variant/10">
-                            <p class="font-bold text-on-surface text-sm tracking-tight">{{ $category->name }}</p>
-                            <p class="text-[10px] text-on-surface-variant/70 font-bold uppercase tracking-widest mt-1 line-clamp-1">{{ $category->description ?? 'Confidential integration classification.' }}</p>
-                        </td>
-                        <td class="px-6 py-5 border-y border-outline-variant/10 text-center">
-                            <span class="px-3 py-1 bg-surface-container-high text-on-surface-variant rounded-lg text-[10px] font-black tracking-widest uppercase">{{ $category->slug }}</span>
-                        </td>
-                        <td class="px-6 py-5 border-y border-outline-variant/10">
-                            <div class="flex items-center justify-center gap-2">
-                                <span class="material-symbols-outlined text-primary text-sm">inventory_2</span>
-                                <span class="font-black text-on-surface text-xs">{{ $category->portfolios->count() }} Projects</span>
+                @forelse($categories as $category)
+                <tr>
+                    <td>
+                        @if($category->image)
+                            <div style="width:64px;height:48px;border-radius:10px;overflow:hidden;border:1px solid var(--border);">
+                                <img src="{{ $category->image }}" alt="{{ $category->name }}" style="width:100%;height:100%;object-fit:cover;">
                             </div>
-                        </td>
-                        <td class="px-6 py-5 text-right rounded-r-2xl border-y border-r border-outline-variant/10">
-                            <div class="flex items-center justify-end gap-2">
-                                <a href="{{ route('admin.portfolio-categories.edit', $category) }}" class="w-10 h-10 flex items-center justify-center bg-surface-container-low text-on-surface-variant rounded-xl hover:bg-secondary-container hover:text-on-secondary-container transition-all shadow-sm">
-                                    <span class="material-symbols-outlined text-sm">edit</span>
-                                </a>
-                                <form id="delete-form-{{ $category->id }}" action="{{ route('admin.portfolio-categories.destroy', $category) }}" method="POST" class="hidden">
-                                    @csrf
-                                    @method('DELETE')
-                                </form>
-                                <button type="button" 
-                                    data-destroy
-                                    data-form-id="delete-form-{{ $category->id }}"
-                                    data-confirm="Terminate this category protocol?"
-                                    class="w-10 h-10 flex items-center justify-center bg-surface-container-low text-on-surface-variant rounded-xl hover:bg-error hover:text-on-error transition-all shadow-sm cursor-pointer">
-                                    <span class="material-symbols-outlined text-sm">delete</span>
-                                </button>
+                        @else
+                            <div style="width:64px;height:48px;border-radius:10px;background:var(--bg-hover);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text-faint);">
+                                <span class="material-symbols-outlined" style="font-size:18px;">image_not_supported</span>
                             </div>
-                        </td>
-                    </tr>
-                @endforeach
+                        @endif
+                    </td>
+                    <td>
+                        <div style="font-size:14px;font-weight:700;color:#fff;">{{ $category->name }}</div>
+                        <div style="font-size:11px;color:var(--text-dim);margin-top:2px;">{{ Str::limit($category->description, 60) ?: 'Tidak ada deskripsi' }}</div>
+                    </td>
+                    <td style="text-align:center;">
+                        <span class="badge badge-gray" style="text-transform:none;font-weight:600;letter-spacing:0;">{{ $category->slug }}</span>
+                    </td>
+                    <td style="text-align:center;">
+                        <div style="display:flex;align-items:center;justify-content:center;gap:6px;">
+                            <span class="material-symbols-outlined" style="color:var(--teal);font-size:16px;">inventory_2</span>
+                            <span style="font-size:13px;font-weight:700;color:#fff;">{{ $category->portfolios->count() }}</span>
+                        </div>
+                    </td>
+                    <td style="text-align:right;">
+                        <div style="display:flex;align-items:center;justify-content:flex-end;gap:6px;">
+                            <a href="{{ route('admin.portfolio-categories.edit', $category) }}" class="icon-btn" title="Edit">
+                                <span class="material-symbols-outlined">edit</span>
+                            </a>
+                            <form id="delete-form-{{ $category->id }}" action="{{ route('admin.portfolio-categories.destroy', $category) }}" method="POST" style="display:none;">
+                                @csrf
+                                @method('DELETE')
+                            </form>
+                            <button type="button" class="icon-btn" style="color:var(--red);border-color:rgba(239,68,68,0.2);" 
+                                data-destroy
+                                data-form-id="delete-form-{{ $category->id }}"
+                                data-confirm="Apakah Anda yakin ingin menghapus kategori '{{ $category->name }}'?"
+                                title="Hapus">
+                                <span class="material-symbols-outlined">delete</span>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="5" style="text-align:center;padding:40px;color:var(--text-faint);">
+                        <span class="material-symbols-outlined" style="font-size:32px;display:block;margin-bottom:8px;opacity:0.4;">category</span>
+                        Belum ada data kategori
+                    </td>
+                </tr>
+                @endforelse
             </tbody>
         </table>
     </div>
 </div>
 @endsection
-
-

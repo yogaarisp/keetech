@@ -1,204 +1,204 @@
 @extends('admin.layouts.app')
-
 @section('title', 'Dashboard')
-
 @section('content')
-<!-- Welcome Section -->
-<section class="mb-10 flex flex-col lg:flex-row lg:justify-between lg:items-end gap-6">
+
+{{-- Page Header --}}
+<div style="margin-bottom:28px; display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap;">
     <div>
-        <p class="text-sm font-bold text-primary tracking-widest uppercase mb-1">System Overview</p>
-        <h2 class="text-4xl font-extrabold tracking-tight text-on-surface">Welcome back, {{ explode(' ', auth()->user()->name)[0] }}</h2>
-        <p class="text-on-surface-variant mt-2 text-lg">Your sovereign IT infrastructure is operating at peak performance.</p>
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.18em;color:var(--teal);margin-bottom:6px;">
+            Selamat Datang Kembali 👋
+        </div>
+        <h2 style="font-size:26px;font-weight:800;color:#fff;letter-spacing:-0.02em;margin:0 0 6px;">
+            {{ explode(' ', auth()->user()->name)[0] }}
+        </h2>
+        <p style="font-size:13px;color:var(--text-dim);margin:0;">
+            Berikut ringkasan aktivitas sistem KeeTech hari ini.
+        </p>
     </div>
-    <div class="flex gap-4">
-        <a href="{{ route('admin.services.create') }}" class="px-6 py-3 bg-surface-container-highest lg:bg-surface-variant rounded-xl font-bold text-sm text-primary flex items-center gap-2 hover:bg-surface-variant transition-colors">
-            <span class="material-symbols-outlined text-lg">add_circle</span> New Service
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <a href="{{ route('admin.services.create') }}" class="btn-secondary">
+            <span class="material-symbols-outlined" style="font-size:16px">add_circle</span>
+            Tambah Layanan
         </a>
-        <a href="{{ route('admin.portfolios.create') }}" class="px-6 py-3 bg-gradient-to-r from-primary-container to-primary text-on-primary rounded-xl font-bold text-sm shadow-xl flex items-center gap-2 hover:scale-[1.02] active:scale-95 transition-all">
-            <span class="material-symbols-outlined text-lg">add</span> New Project
+        <a href="{{ route('admin.portfolios.create') }}" class="btn-primary">
+            <span class="material-symbols-outlined" style="font-size:16px">add</span>
+            Proyek Baru
         </a>
     </div>
-</section>
+</div>
 
-<!-- Bento Grid: Stats Cards -->
-<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-    <!-- Card 1: Services -->
-    <div class="bg-surface-container-lowest p-6 rounded-3xl shadow-sm group hover:shadow-xl transition-all duration-500 relative overflow-hidden border border-outline-variant/20">
-        <div class="relative z-10">
-            <div class="w-12 h-12 bg-primary-container/10 rounded-2xl flex items-center justify-center mb-4 text-primary">
-                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dns</span>
-            </div>
-            <h3 class="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1">Active Services</h3>
-            <div class="flex items-baseline gap-2">
-                <span class="text-4xl font-extrabold text-on-surface">{{ $stats['services'] }}</span>
-                <span class="text-xs font-bold text-green-600 bg-green-100 px-2 py-0.5 rounded-full">Live</span>
-            </div>
+{{-- Stats Grid --}}
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:28px;">
+
+    {{-- Services --}}
+    <div class="admin-card" style="padding:20px;position:relative;overflow:hidden;">
+        <div style="width:40px;height:40px;border-radius:10px;background:rgba(45,212,191,0.12);display:flex;align-items:center;justify-content:center;margin-bottom:14px;">
+            <span class="material-symbols-outlined" style="color:var(--teal);font-size:20px">build_circle</span>
         </div>
-        <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity">
-            <span class="material-symbols-outlined text-9xl">dns</span>
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.14em;color:var(--text-faint);margin-bottom:6px;">Layanan Aktif</div>
+        <div style="display:flex;align-items:baseline;gap:8px;">
+            <span style="font-size:32px;font-weight:800;color:#fff;line-height:1">{{ $stats['services'] }}</span>
+            <span class="badge badge-teal">Live</span>
         </div>
     </div>
 
-    <!-- Card 2: Messages -->
-    <div class="bg-surface-container-lowest p-6 rounded-3xl shadow-sm group hover:shadow-xl transition-all duration-500 relative overflow-hidden border border-outline-variant/20">
-        <div class="relative z-10">
-            <div class="w-12 h-12 bg-secondary-container/20 rounded-2xl flex items-center justify-center mb-4 text-secondary">
-                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">chat_bubble</span>
-            </div>
-            <h3 class="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1">New Messages</h3>
-            <div class="flex items-baseline gap-2">
-                <span class="text-4xl font-extrabold text-on-surface">{{ $stats['unread_contacts'] }}</span>
-                @if($stats['unread_contacts'] > 0)
-                <span class="text-xs font-bold text-secondary bg-secondary-fixed/30 px-2 py-0.5 rounded-full">Urgent</span>
-                @else
-                <span class="text-xs font-bold text-on-surface-variant bg-surface-variant px-2 py-0.5 rounded-full">Clear</span>
-                @endif
-            </div>
+    {{-- Contacts --}}
+    <div class="admin-card" style="padding:20px;position:relative;overflow:hidden;">
+        <div style="width:40px;height:40px;border-radius:10px;background:rgba(45,212,191,0.12);display:flex;align-items:center;justify-content:center;margin-bottom:14px;">
+            <span class="material-symbols-outlined" style="color:var(--teal);font-size:20px">mail</span>
         </div>
-        <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity">
-            <span class="material-symbols-outlined text-9xl">chat_bubble</span>
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.14em;color:var(--text-faint);margin-bottom:6px;">Pesan Baru</div>
+        <div style="display:flex;align-items:baseline;gap:8px;">
+            <span style="font-size:32px;font-weight:800;color:#fff;line-height:1">{{ $stats['unread_contacts'] }}</span>
+            @if($stats['unread_contacts'] > 0)
+                <span class="badge badge-red">Baru</span>
+            @else
+                <span class="badge badge-gray">Kosong</span>
+            @endif
         </div>
     </div>
 
-    <!-- Card 3: Portfolio -->
-    <div class="bg-surface-container-lowest p-6 rounded-3xl shadow-sm group hover:shadow-xl transition-all duration-500 relative overflow-hidden border border-outline-variant/20">
-        <div class="relative z-10">
-            <div class="w-12 h-12 bg-surface-variant/40 rounded-2xl flex items-center justify-center mb-4 text-on-surface-variant">
-                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
-            </div>
-            <h3 class="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1">Portfolio Items</h3>
-            <div class="flex items-baseline gap-2">
-                <span class="text-4xl font-extrabold text-on-surface">{{ $stats['portfolios'] }}</span>
-                <span class="text-[10px] font-bold text-on-surface-variant/50 tracking-tighter">PUBLISHED</span>
-            </div>
+    {{-- Portfolio --}}
+    <div class="admin-card" style="padding:20px;position:relative;overflow:hidden;">
+        <div style="width:40px;height:40px;border-radius:10px;background:rgba(45,212,191,0.12);display:flex;align-items:center;justify-content:center;margin-bottom:14px;">
+            <span class="material-symbols-outlined" style="color:var(--teal);font-size:20px">auto_awesome</span>
         </div>
-        <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity">
-            <span class="material-symbols-outlined text-9xl">auto_awesome</span>
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.14em;color:var(--text-faint);margin-bottom:6px;">Proyek Portofolio</div>
+        <div style="display:flex;align-items:baseline;gap:8px;">
+            <span style="font-size:32px;font-weight:800;color:#fff;line-height:1">{{ $stats['portfolios'] }}</span>
+            <span class="badge badge-gray">Published</span>
         </div>
     </div>
 
-    <!-- Card 4: Testimonials -->
-    <div class="bg-[#800020] p-6 rounded-3xl shadow-2xl shadow-primary-container/20 group hover:scale-[1.02] transition-all duration-500 relative overflow-hidden">
-        <div class="relative z-10">
-            <div class="w-12 h-12 bg-secondary-container rounded-2xl flex items-center justify-center mb-4 text-on-secondary-container shadow-lg">
-                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">reviews</span>
-            </div>
-            <h3 class="text-xs font-bold text-secondary-container/80 uppercase tracking-wider mb-1">Client Reviews</h3>
-            <div class="flex items-baseline gap-2">
-                <span class="text-4xl font-extrabold text-white">{{ $stats['testimonials'] }}</span>
-                <span class="text-xs font-bold text-secondary-container bg-white/10 px-2 py-0.5 rounded-full">↑ Plus</span>
-            </div>
+    {{-- Testimonials --}}
+    <div class="admin-card" style="padding:20px;position:relative;overflow:hidden;border-color:rgba(45,212,191,0.2);background:rgba(45,212,191,0.06);">
+        <div style="width:40px;height:40px;border-radius:10px;background:rgba(45,212,191,0.15);display:flex;align-items:center;justify-content:center;margin-bottom:14px;">
+            <span class="material-symbols-outlined" style="color:var(--teal);font-size:20px">format_quote</span>
         </div>
-        <div class="absolute right-0 top-0 w-32 h-32 bg-white/5 rounded-full -mr-16 -mt-16 blur-2xl"></div>
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.14em;color:var(--teal);margin-bottom:6px;">Testimoni Klien</div>
+        <div style="display:flex;align-items:baseline;gap:8px;">
+            <span style="font-size:32px;font-weight:800;color:#fff;line-height:1">{{ $stats['testimonials'] }}</span>
+            <span class="badge badge-teal">✓ Aktif</span>
+        </div>
     </div>
-</section>
 
-<div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
-    <!-- Recent Inquiries Table -->
-    <section class="xl:col-span-2 bg-surface-container-lowest rounded-[32px] p-8 shadow-sm border border-outline-variant/20">
-        <div class="flex justify-between items-center mb-8">
-            <h3 class="text-xl font-bold tracking-tight text-on-surface">Recent Inquiries</h3>
-            <a class="text-sm font-bold text-primary hover:underline bg-surface-container py-2 px-4 rounded-xl" href="{{ route('admin.contacts.index') }}">View all requests</a>
+</div>
+
+{{-- Main Grid --}}
+<div style="display:grid;grid-template-columns:1fr 320px;gap:20px;" class="dashboard-grid">
+
+    {{-- Recent Contacts --}}
+    <div class="admin-card" style="overflow:hidden;">
+        <div style="padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+            <div>
+                <div style="font-size:15px;font-weight:700;color:#fff;">Pesan Masuk Terbaru</div>
+                <div style="font-size:11px;color:var(--text-faint);margin-top:2px;">Permintaan konsultasi dari pengunjung</div>
+            </div>
+            <a href="{{ route('admin.contacts.index') }}" class="btn-secondary" style="padding:7px 14px;font-size:12px;">
+                Lihat Semua
+            </a>
         </div>
-        <div class="overflow-x-auto">
-            <table class="w-full text-left">
+        <div style="overflow-x:auto;">
+            <table class="admin-table">
                 <thead>
-                    <tr class="border-b border-outline-variant/10">
-                        <th class="pb-4 text-[10px] font-extrabold uppercase tracking-widest text-on-surface-variant">Name</th>
-                        <th class="pb-4 text-[10px] font-extrabold uppercase tracking-widest text-on-surface-variant">Service Type</th>
-                        <th class="pb-4 text-[10px] font-extrabold uppercase tracking-widest text-on-surface-variant">Date</th>
-                        <th class="pb-4 text-[10px] font-extrabold uppercase tracking-widest text-on-surface-variant text-right">Action</th>
+                    <tr>
+                        <th>Pengirim</th>
+                        <th>Jenis Layanan</th>
+                        <th>Tanggal</th>
+                        <th style="text-align:right">Aksi</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-outline-variant/5">
+                <tbody>
                     @forelse($recent_contacts as $contact)
-                    <tr class="group hover:bg-surface-container-low transition-colors">
-                        <td class="py-5">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center text-on-primary-fixed text-xs font-bold shadow-sm">
-                                    {{ substr($contact->name, 0, 2) }}
+                    <tr>
+                        <td>
+                            <div style="display:flex;align-items:center;gap:10px;">
+                                <div style="width:34px;height:34px;border-radius:8px;background:var(--teal-dim);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--teal);flex-shrink:0;">
+                                    {{ strtoupper(substr($contact->name, 0, 2)) }}
                                 </div>
                                 <div>
-                                    <p class="font-bold text-sm text-on-surface">{{ $contact->name }}</p>
-                                    <p class="text-[10px] font-medium tracking-tight text-on-surface-variant">{{ $contact->email }}</p>
+                                    <div style="font-size:13px;font-weight:600;color:#fff;">{{ $contact->name }}</div>
+                                    <div style="font-size:11px;color:var(--text-faint);">{{ $contact->email }}</div>
                                 </div>
                             </div>
                         </td>
-                        <td class="py-5 font-bold text-sm text-on-surface-variant text-primary-container">
-                            {{ $contact->service_type }}
+                        <td>
+                            <span class="badge badge-teal">{{ $contact->service_type }}</span>
                         </td>
-                        <td class="py-5 text-xs font-semibold text-on-surface-variant tracking-tight">{{ $contact->created_at->format('M d, Y') }}</td>
-                        <td class="py-5 text-right">
-                            <a href="{{ route('admin.contacts.show', $contact) }}" class="inline-block px-4 py-2 rounded-xl bg-surface-variant text-on-surface-variant text-[10px] font-extrabold uppercase tracking-widest hover:bg-primary-container hover:text-white transition-colors">View</a>
+                        <td style="font-size:12px;">{{ $contact->created_at->format('d M Y') }}</td>
+                        <td style="text-align:right;">
+                            <a href="{{ route('admin.contacts.show', $contact) }}" class="btn-secondary" style="padding:6px 14px;font-size:11px;">
+                                Detail
+                            </a>
                         </td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="4" class="py-12 text-center text-on-surface-variant font-bold uppercase tracking-widest text-xs">Inbox is Completely Empty</td>
+                        <td colspan="4" style="text-align:center;padding:40px;color:var(--text-faint);">
+                            <span class="material-symbols-outlined" style="font-size:32px;display:block;margin-bottom:8px;opacity:0.4;">inbox</span>
+                            Belum ada pesan masuk
+                        </td>
                     </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
-    </section>
+    </div>
 
-    <!-- Project Progress Sidebar -->
-    <section class="bg-surface-container-low rounded-[32px] p-8 border border-outline-variant/10 shadow-sm transition-all duration-300">
-        <h3 class="text-xl font-bold tracking-tight mb-8 text-on-surface">Project Progress</h3>
-        <div class="space-y-8">
-            <!-- Progress Item 1 -->
-            <div>
-                <div class="flex justify-between items-end mb-2">
-                    <div>
-                        <p class="text-sm font-bold text-on-surface">Sovereign Cloud Setup</p>
-                        <p class="text-[10px] text-on-surface-variant font-medium">Fintech Solutions Ltd.</p>
-                    </div>
-                    <span class="text-sm font-extrabold text-primary">85%</span>
-                </div>
-                <div class="h-2 w-full bg-surface-container-high rounded-full overflow-hidden">
-                    <div class="h-full bg-gradient-to-r from-primary-container to-primary w-[85%] rounded-full shadow-lg shadow-primary/20"></div>
-                </div>
-            </div>
-            <!-- Progress Item 2 -->
-            <div>
-                <div class="flex justify-between items-end mb-2">
-                    <div>
-                        <p class="text-sm font-bold text-on-surface">AI Integration Phase II</p>
-                        <p class="text-[10px] text-on-surface-variant font-medium">Global Logistics</p>
-                    </div>
-                    <span class="text-sm font-extrabold text-primary">42%</span>
-                </div>
-                <div class="h-2 w-full bg-surface-container-high rounded-full overflow-hidden">
-                    <div class="h-full bg-gradient-to-r from-primary-container to-primary w-[42%] rounded-full shadow-lg shadow-primary/20"></div>
-                </div>
-            </div>
-            <!-- Progress Item 3 -->
-            <div>
-                <div class="flex justify-between items-end mb-2">
-                    <div>
-                        <p class="text-sm font-bold text-on-surface">Mobile App Core V3</p>
-                        <p class="text-[10px] text-on-surface-variant font-medium">KeeTech Labs</p>
-                    </div>
-                    <span class="text-sm font-extrabold text-primary">92%</span>
-                </div>
-                <div class="h-2 w-full bg-surface-container-high rounded-full overflow-hidden">
-                    <div class="h-full bg-gradient-to-r from-primary-container to-primary w-[92%] rounded-full shadow-lg shadow-primary/20"></div>
-                </div>
-            </div>
+    {{-- Quick Links Panel --}}
+    <div style="display:flex;flex-direction:column;gap:16px;">
 
-            <!-- CTA for Projects -->
-            <div class="mt-10 p-6 bg-surface-container-lowest rounded-2xl border-2 border-dashed border-outline-variant/30 text-center group hover:border-primary/50 transition-all duration-300">
-                <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mx-auto mb-3 text-primary group-hover:scale-110 transition-transform">
-                    <span class="material-symbols-outlined text-outline-variant">add_task</span>
-                </div>
-                <p class="text-[10px] font-extrabold text-on-surface-variant uppercase tracking-widest mb-4">Assign New Task</p>
-                <a href="{{ route('admin.portfolios.create') }}" class="block w-full py-3 bg-secondary-container text-on-secondary-container rounded-xl text-xs font-extrabold shadow-md hover:shadow-lg hover:brightness-105 active:scale-[0.98] transition-all uppercase tracking-widest">
-                    Browse Team
+        {{-- Quick Nav --}}
+        <div class="admin-card" style="padding:20px;">
+            <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:16px;">Akses Cepat</div>
+            <div style="display:flex;flex-direction:column;gap:4px;">
+                @php
+                    $quickLinks = [
+                        ['label' => 'Kelola Layanan', 'href' => route('admin.services.index'), 'icon' => 'build_circle'],
+                        ['label' => 'Tambah Portofolio', 'href' => route('admin.portfolios.create'), 'icon' => 'add_photo_alternate'],
+                        ['label' => 'Lihat Testimoni', 'href' => route('admin.testimonials.index'), 'icon' => 'format_quote'],
+                        ['label' => 'Pengaturan Situs', 'href' => route('admin.settings.index'), 'icon' => 'tune'],
+                    ];
+                @endphp
+
+                @foreach($quickLinks as $link)
+                <a href="{{ $link['href'] }}" style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:9px;text-decoration:none;color:var(--text-dim);font-size:13px;font-weight:600;transition:all 0.15s;"
+                    onmouseenter="this.style.background='var(--bg-hover)';this.style.color='#fff'"
+                    onmouseleave="this.style.background='none';this.style.color='var(--text-dim)'">
+                    <span class="material-symbols-outlined" style="font-size:17px;color:var(--teal)">{{ $link['icon'] }}</span>
+                    {{ $link['label'] }}
                 </a>
+                @endforeach
             </div>
         </div>
-    </section>
+
+        {{-- System Info --}}
+        <div class="admin-card" style="padding:20px;">
+            <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:16px;">Info Sistem</div>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+                @php
+                    $infos = [
+                        ['label' => 'Status Server', 'value' => 'Online', 'ok' => true],
+                        ['label' => 'Database', 'value' => 'Terhubung', 'ok' => true],
+                        ['label' => 'Versi App', 'value' => 'v1.0.0', 'ok' => true],
+                    ];
+                @endphp
+                @foreach($infos as $info)
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <span style="font-size:12px;color:var(--text-dim);">{{ $info['label'] }}</span>
+                    <span class="badge {{ $info['ok'] ? 'badge-teal' : 'badge-red' }}">{{ $info['value'] }}</span>
+                </div>
+                @endforeach
+            </div>
+        </div>
+
+    </div>
 </div>
+
+<style>
+@media (max-width: 900px) {
+    .dashboard-grid { grid-template-columns: 1fr !important; }
+}
+</style>
+
 @endsection
-
-

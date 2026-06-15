@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { motion, Variants } from "framer-motion";
 import { useEffect, useState, useRef } from "react";
@@ -81,7 +81,7 @@ export default function Services({ initialData }: { initialData?: any[] }) {
   };
 
   return (
-    <SectionShell id="layanan" glow="right">
+    <SectionShell id="layanan" glow="right" className="!py-12 md:!py-16">
       <motion.div
         initial="hidden"
         whileInView="show"
@@ -124,30 +124,29 @@ export default function Services({ initialData }: { initialData?: any[] }) {
             {services.map((service, idx) => (
               <div
                 key={service.id || idx}
-                className="group flex-none snap-center sm:w-auto"
-                style={{ width: "80vw" }}
+                className="group flex-none snap-center w-[80vw] sm:w-auto"
               >
                 <div
                   className="h-full rounded-2xl p-6 transition-all duration-300 sm:p-8 group-hover:-translate-y-1"
                   style={{
                     background: CARD_BG,
                     border: `1px solid ${BORDER_SUBTLE}`,
-                    boxShadow: "0 0 0 0 rgba(0,229,255,0)",
+                    boxShadow: "0 0 0 0 rgba(45,212,191,0)",
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor = "rgba(0,229,255,0.25)";
-                    e.currentTarget.style.boxShadow = "0 8px 32px rgba(0,229,255,0.08)";
+                    e.currentTarget.style.borderColor = "rgba(45,212,191,0.25)";
+                    e.currentTarget.style.boxShadow = "0 8px 32px rgba(45,212,191,0.08)";
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.borderColor = BORDER_SUBTLE;
-                    e.currentTarget.style.boxShadow = "0 0 0 0 rgba(0,229,255,0)";
+                    e.currentTarget.style.boxShadow = "0 0 0 0 rgba(45,212,191,0)";
                   }}
                 >
                   <div
                     className="mb-6 flex h-12 w-12 items-center justify-center rounded-xl sm:h-14 sm:w-14"
                     style={{
                       background: GRADIENT,
-                      boxShadow: "0 0 20px rgba(0,229,255,0.3)",
+                      boxShadow: "0 0 20px rgba(45,212,191,0.3)",
                     }}
                   >
                     <span

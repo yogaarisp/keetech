@@ -1,8 +1,8 @@
 export const BG = "#040B12";
 export const BG_RGB = "4, 11, 18";
-export const GRADIENT = "linear-gradient(90deg, #00E5FF 0%, #26FF5C 100%)";
-export const CYAN = "#00E5FF";
-export const TEAL = "#129E92";
+export const GRADIENT = "linear-gradient(90deg, #2DD4BF 0%, #34D399 100%)";
+export const CYAN = "#2DD4BF";
+export const TEAL = "#14B8A6";
 export const TEXT_MUTED = "rgba(255,255,255,0.48)";
 export const BORDER_SUBTLE = "rgba(255,255,255,0.09)";
 export const BORDER_LIGHT = "rgba(255,255,255,0.14)";

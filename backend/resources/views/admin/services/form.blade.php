@@ -1,94 +1,90 @@
 @extends('admin.layouts.app')
-
-@section('title', isset($service) ? 'Modify System' : 'Deploy Service')
-
+@section('title', isset($service) ? 'Edit Layanan' : 'Tambah Layanan')
 @section('content')
-<div class="glass-card overflow-hidden">
-    <div class="px-10 py-8 border-b border-slate-200 dark:border-white/5 bg-white dark:bg-white/[0.02] flex items-center gap-4">
-        <div class="w-12 h-12 rounded-2xl bg-gold-500/10 border border-gold-500/20 flex items-center justify-center text-gold-500">
-            <span class="material-symbols-outlined">{{ isset($service) ? 'edit_square' : 'add_task' }}</span>
-        </div>
-        <div>
-            <h3 class="font-outfit font-bold text-lg text-slate-900 dark:text-white tracking-widest uppercase">{{ isset($service) ? 'Service Configuration' : 'Service Initiation' }}</h3>
-            <p class="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider mt-1">Entity Engine: Layanan Utama IT</p>
-        </div>
+
+<div style="margin-bottom:28px;">
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.18em;color:var(--teal);margin-bottom:6px;">
+        Konfigurasi Layanan
+    </div>
+    <h2 style="font-size:26px;font-weight:800;color:#fff;letter-spacing:-0.02em;margin:0 0 6px;">
+        {{ isset($service) ? 'Edit Layanan' : 'Tambah Layanan Baru' }}
+    </h2>
+    <p style="font-size:13px;color:var(--text-dim);margin:0;">
+        Silakan lengkapi formulir di bawah ini untuk mengelola layanan.
+    </p>
+</div>
+
+<div class="admin-card">
+    <div style="padding:18px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;">
+        <span class="material-symbols-outlined" style="color:var(--teal);font-size:20px">{{ isset($service) ? 'edit_square' : 'add_circle' }}</span>
+        <div style="font-size:14px;font-weight:700;color:#fff;">Form Layanan</div>
     </div>
     
-    <form action="{{ isset($service) ? route('admin.services.update', $service) : route('admin.services.store') }}" method="POST" class="p-10 space-y-10">
+    <form action="{{ isset($service) ? route('admin.services.update', $service) : route('admin.services.store') }}" method="POST" style="padding:24px;">
         @csrf
         @if(isset($service)) @method('PUT') @endif
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-            <div class="space-y-3">
-                <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider">Operational Title</label>
-                <input type="text" name="title" value="{{ old('title', $service->title ?? '') }}" required
-                    class="w-full px-6 py-4 bg-white border-slate-200 shadow-sm dark:bg-white/[0.03] dark:border-slate-200 dark:border-white/5 dark:shadow-none border border-slate-200 dark:border-white/5 rounded-2xl focus:ring-4 focus:ring-maroon-700/20 focus:border-maroon-700 outline-none transition-all font-bold text-slate-900 dark:text-white placeholder:text-slate-700"
-                    placeholder="e.g. Cyber Security Protocol">
-                @error('title') <p class="text-rose-500 text-[10px] mt-2 font-bold uppercase tracking-widest">{{ $message }}</p> @enderror
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;">
+            <div>
+                <label class="admin-label">Nama Layanan</label>
+                <input type="text" name="title" value="{{ old('title', $service->title ?? '') }}" required class="admin-input" placeholder="Contoh: Web Development">
+                @error('title') <p style="color:var(--red);font-size:11px;margin-top:6px;">{{ $message }}</p> @enderror
             </div>
-            <div class="space-y-3">
-                <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider">Material Identity (Icon)</label>
-                <div class="relative">
-                    <input type="text" name="icon" value="{{ old('icon', $service->icon ?? 'dns') }}" required
-                        class="w-full px-6 py-4 bg-white border-slate-200 shadow-sm dark:bg-white/[0.03] dark:border-slate-200 dark:border-white/5 dark:shadow-none border border-slate-200 dark:border-white/5 rounded-2xl focus:ring-4 focus:ring-maroon-700/20 focus:border-maroon-700 outline-none transition-all font-bold text-slate-900 dark:text-white uppercase tracking-widest">
-                    <a href="https://fonts.google.com/icons" target="_blank" class="absolute right-6 top-1/2 -translate-y-1/2 text-gold-500 text-[10px] font-bold uppercase tracking-widest hover:text-slate-900 dark:text-white transition-colors">Find Icon</a>
+            <div>
+                <label class="admin-label">Ikon (Material Symbols)</label>
+                <div style="position:relative;">
+                    <input type="text" name="icon" value="{{ old('icon', $service->icon ?? 'dns') }}" required class="admin-input" placeholder="dns">
+                    <a href="https://fonts.google.com/icons" target="_blank" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:10px;font-weight:700;text-transform:uppercase;color:var(--teal);text-decoration:none;">Cari Ikon</a>
                 </div>
             </div>
         </div>
 
-        <div class="space-y-3">
-            <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider">Core Brief / Description</label>
-            <textarea name="description" rows="4" required
-                class="w-full px-6 py-4 bg-white border-slate-200 shadow-sm dark:bg-white/[0.03] dark:border-slate-200 dark:border-white/5 dark:shadow-none border border-slate-200 dark:border-white/5 rounded-2xl focus:ring-4 focus:ring-maroon-700/20 focus:border-maroon-700 outline-none transition-all font-medium text-slate-600 dark:text-slate-400 placeholder:text-slate-700 resize-none">{{ old('description', $service->description ?? '') }}</textarea>
+        <div style="margin-bottom:20px;">
+            <label class="admin-label">Deskripsi Singkat</label>
+            <textarea name="description" rows="3" required class="admin-input" style="resize:none;" placeholder="Deskripsikan layanan ini...">{{ old('description', $service->description ?? '') }}</textarea>
         </div>
 
-        <div class="space-y-6">
-            <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider">Service High-Performance Features</label>
-            <div id="features-container" class="space-y-4">
+        <div style="margin-bottom:20px;">
+            <label class="admin-label">Fitur / Keunggulan</label>
+            <div id="features-container" style="display:flex;flex-direction:column;gap:10px;margin-bottom:10px;">
                 @php
                     $features = old('features', $service->features ?? ['']);
                     if (!is_array($features) || empty($features)) $features = [''];
                 @endphp
                 @foreach($features as $index => $feature)
-                    <div class="flex gap-3 animate-in fade-in duration-500">
-                        <input type="text" name="features[]" value="{{ $feature }}" 
-                            class="flex-1 px-6 py-4 bg-white border-slate-200 shadow-sm dark:bg-white/[0.03] dark:border-slate-200 dark:border-white/5 dark:shadow-none border border-slate-200 dark:border-white/5 rounded-2xl focus:ring-4 focus:ring-maroon-700/20 focus:border-maroon-700 outline-none transition-all font-bold text-slate-900 dark:text-white placeholder:text-slate-700"
-                            placeholder="Data Protection & Encryption">
+                    <div style="display:flex;gap:10px;align-items:center;">
+                        <input type="text" name="features[]" value="{{ $feature }}" class="admin-input" placeholder="Contoh: Keamanan Data Tingkat Tinggi">
+                        @if($index > 0)
+                        <button type="button" onclick="this.parentElement.remove()" class="icon-btn" style="flex-shrink:0;color:var(--red);border-color:rgba(239,68,68,0.2);">
+                            <span class="material-symbols-outlined">delete</span>
+                        </button>
+                        @endif
                     </div>
                 @endforeach
             </div>
-            <button type="button" onclick="addFeatureField()" class="text-[10px] font-bold text-gold-500 hover:text-slate-900 dark:text-white flex items-center gap-2 transition-all uppercase tracking-widest">
-                <span class="material-symbols-outlined text-sm">add_circle</span> Add Feature Line
+            <button type="button" onclick="addFeatureField()" style="background:none;border:none;color:var(--teal);font-size:11px;font-weight:700;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:6px;padding:0;">
+                <span class="material-symbols-outlined" style="font-size:14px;">add_circle</span> Tambah Fitur
             </button>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-10 pt-10 border-t border-slate-200 dark:border-white/5">
-            <div class="space-y-3">
-                <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider">Priority Rank</label>
-                <input type="number" name="sort_order" value="{{ old('sort_order', $service->sort_order ?? 0) }}" required
-                    class="w-full px-6 py-4 bg-white border-slate-200 shadow-sm dark:bg-white/[0.03] dark:border-slate-200 dark:border-white/5 dark:shadow-none border border-slate-200 dark:border-white/5 rounded-2xl focus:ring-4 focus:ring-maroon-700/20 focus:border-maroon-700 outline-none transition-all font-bold text-slate-900 dark:text-white text-center text-lg">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;padding-top:20px;border-top:1px solid var(--border);">
+            <div>
+                <label class="admin-label">Urutan Tampil</label>
+                <input type="number" name="sort_order" value="{{ old('sort_order', $service->sort_order ?? 0) }}" required class="admin-input" style="max-width:120px;text-align:center;">
             </div>
-            <div class="flex items-center pt-8">
-                <label class="flex items-center gap-4 cursor-pointer group px-8 py-4 bg-white dark:bg-white/[0.02] border border-slate-200 dark:border-white/5 rounded-2xl hover:bg-slate-100 dark:bg-white/5 transition-all w-full">
-                    <div class="relative w-6 h-6">
-                        <input type="checkbox" name="is_active" value="1" {{ old('is_active', $service->is_active ?? true) ? 'checked' : '' }}
-                            class="peer absolute opacity-0 w-full h-full cursor-pointer z-10">
-                        <div class="w-6 h-6 bg-slate-100 dark:bg-white/5 border border-slate-300 dark:border-white/10 rounded-lg group-hover:border-maroon-500 transition-all peer-checked:bg-maroon-700 peer-checked:border-maroon-700 flex items-center justify-center text-slate-900 dark:text-white">
-                            <span class="material-symbols-outlined text-sm scale-0 peer-checked:scale-100 transition-transform">check</span>
-                        </div>
-                    </div>
-                    <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest group-hover:text-slate-900 dark:text-white transition-colors">Broadcast to Public</span>
+            <div style="display:flex;align-items:center;">
+                <label style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:12px 16px;border:1px solid var(--border);border-radius:10px;background:rgba(255,255,255,0.02);width:100%;">
+                    <input type="checkbox" name="is_active" value="1" {{ old('is_active', $service->is_active ?? true) ? 'checked' : '' }} style="width:16px;height:16px;accent-color:var(--teal);">
+                    <span style="font-size:12px;font-weight:600;color:var(--text-dim);">Aktif (Tampilkan di Publik)</span>
                 </label>
             </div>
         </div>
 
-        <div class="flex flex-wrap gap-4 pt-10 pb-4">
-            <button type="submit" class="bg-slate-900 text-white dark:bg-white dark:text-black font-bold px-12 py-5 rounded-[24px] hover:bg-gold-500 transition-all shadow-2xl shadow-black/50 uppercase tracking-widest text-xs">
-                Commit Changes
+        <div style="display:flex;gap:12px;margin-top:30px;">
+            <button type="submit" class="btn-primary">
+                <span class="material-symbols-outlined" style="font-size:18px;">save</span> Simpan
             </button>
-            <a href="{{ route('admin.services.index') }}" class="bg-slate-100 dark:bg-white/5 text-slate-500 dark:text-slate-400 font-bold px-12 py-5 rounded-[24px] hover:bg-slate-200 dark:bg-white/10 hover:text-slate-900 dark:text-white transition-all uppercase tracking-widest text-xs border border-slate-200 dark:border-white/5">
-                Abort
-            </a>
+            <a href="{{ route('admin.services.index') }}" class="btn-secondary">Batal</a>
         </div>
     </form>
 </div>
@@ -97,10 +93,10 @@
     function addFeatureField() {
         const container = document.getElementById('features-container');
         const div = document.createElement('div');
-        div.className = 'flex gap-3 animate-in slide-in-from-top-2 fade-in duration-300';
+        div.style.cssText = 'display:flex;gap:10px;align-items:center;';
         div.innerHTML = `
-            <input type="text" name="features[]" class="flex-1 px-6 py-4 bg-white border-slate-200 shadow-sm dark:bg-white/[0.03] dark:border-slate-200 dark:border-white/5 dark:shadow-none border border-slate-200 dark:border-white/5 rounded-2xl focus:ring-4 focus:ring-maroon-700/20 focus:border-maroon-700 outline-none transition-all font-bold text-slate-900 dark:text-white text-sm" placeholder="...">
-            <button type="button" onclick="this.parentElement.remove()" class="w-14 h-14 bg-slate-100 dark:bg-white/5 text-rose-500 rounded-2xl flex items-center justify-center hover:bg-rose-600 hover:text-slate-900 dark:text-white transition-all">
+            <input type="text" name="features[]" class="admin-input" placeholder="Fitur baru...">
+            <button type="button" onclick="this.parentElement.remove()" class="icon-btn" style="flex-shrink:0;color:var(--red);border-color:rgba(239,68,68,0.2);">
                 <span class="material-symbols-outlined">delete</span>
             </button>
         `;
@@ -108,5 +104,3 @@
     }
 </script>
 @endsection
-
-
