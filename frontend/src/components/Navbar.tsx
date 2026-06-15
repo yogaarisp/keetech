@@ -1,208 +1,48 @@
 "use client";
-
-import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 
-export const NAV_H = 72;
-
 export default function Navbar({ initialData }: { initialData?: any }) {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [activeHash, setActiveHash] = useState("");
   const [scrolled, setScrolled] = useState(false);
-  const [companyName, setCompanyName] = useState(
-    initialData?.general?.company_name || "KeeTech"
-  );
 
   useEffect(() => {
-    setActiveHash(window.location.hash || "#beranda");
-    const onHash = () => setActiveHash(window.location.hash || "#beranda");
-    window.addEventListener("hashchange", onHash);
-
-    const onScroll = () => setScrolled(window.scrollY > 60);
-    window.addEventListener("scroll", onScroll, { passive: true });
-
-    if (!initialData) {
-      (async () => {
-        try {
-          const { getSettings } = await import("@/lib/api");
-          const s = await getSettings();
-          if (s?.general?.company_name) setCompanyName(s.general.company_name);
-        } catch {}
-      })();
-    }
-    return () => {
-      window.removeEventListener("hashchange", onHash);
-      window.removeEventListener("scroll", onScroll);
-    };
-  }, [initialData]);
+    const handleScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const links = [
-    { label: "Beranda",     hash: "#beranda" },
-    { label: "Layanan",     hash: "#layanan" },
-    { label: "Tentang Kami",hash: "#tentangkami" },
-    { label: "Portofolio",  hash: "#portofolio" },
-    { label: "Kontak",      hash: "#kontak" },
+    { name: "Beranda", href: "#beranda" },
+    { name: "Layanan", href: "#layanan" },
+    { name: "Tentang Kami", href: "#tentangkami" },
+    { name: "Portofolio", href: "#portofolio" },
+    { name: "Kontak", href: "#kontak" },
   ];
 
   return (
-    <>
-      <nav
-        className="fixed top-0 left-0 w-full z-50"
-        style={{
-          height: NAV_H,
-          background: scrolled ? "rgba(10,14,26,0.92)" : "transparent",
-          backdropFilter: scrolled ? "blur(12px)" : "none",
-          WebkitBackdropFilter: scrolled ? "blur(12px)" : "none",
-          borderBottom: scrolled ? "1px solid rgba(25,171,205,0.1)" : "none",
-          transition: "background 0.4s ease, backdrop-filter 0.4s ease, border 0.4s ease",
-        }}
-      >
-        <div
-          className="flex items-center justify-between h-full w-full"
-          style={{ padding: "0 40px" }}
-        >
-          {/* Logo */}
-          <motion.div
-            whileHover={{ scale: 1.04 }}
-            className="flex items-center gap-2.5 cursor-pointer select-none"
-            onClick={() => {
-              window.scrollTo({ top: 0, behavior: "smooth" });
-              setActiveHash("#beranda");
-            }}
-          >
-            <div
-              className="flex items-center justify-center font-black text-lg"
-              style={{
-                width: 36, height: 36,
-                borderRadius: 10,
-                color: "#0A0E1A",
-                background: "linear-gradient(135deg, #19ABCD, #129E92)",
-                boxShadow: "0 0 14px rgba(25,171,205,0.4)",
-                flexShrink: 0,
-              }}
-            >
-              K
-            </div>
-            <span className="text-xl font-black text-white tracking-tight">
-              Kee<span style={{
-                background: "linear-gradient(90deg, #19ABCD, #129E92)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
-              }}>Tech</span>
-            </span>
-          </motion.div>
-
-          {/* Desktop nav links */}
-          <div className="hidden md:flex items-center gap-8">
-            {links.map(({ label, hash }) => {
-              const active = activeHash === hash;
-              return (
-                <a
-                  key={hash}
-                  href={hash}
-                  onClick={() => setActiveHash(hash)}
-                  className="relative pb-[3px] text-sm font-medium transition-colors duration-200"
-                  style={{ color: active ? "#19ABCD" : "rgba(255,255,255,0.65)" }}
-                  onMouseEnter={e => { if (!active) e.currentTarget.style.color = "#fff"; }}
-                  onMouseLeave={e => { if (!active) e.currentTarget.style.color = "rgba(255,255,255,0.65)"; }}
-                >
-                  {label}
-                  {active && (
-                    <motion.span
-                      layoutId="nav-line"
-                      className="absolute bottom-0 left-0 right-0"
-                      style={{ height: 2, background: "#19ABCD", borderRadius: 2 }}
-                      transition={{ type: "spring", stiffness: 380, damping: 36 }}
-                    />
-                  )}
-                </a>
-              );
-            })}
+    <nav className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${scrolled ? "bg-black/80 backdrop-blur-lg border-b border-white/5 py-4" : "bg-transparent py-6"}`}>
+      <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
+        
+        <div className="flex items-center gap-3 cursor-pointer" onClick={() => window.scrollTo(0,0)}>
+          <div className="w-10 h-10 rounded-full bg-[#129E92] flex items-center justify-center shadow-[0_0_15px_rgba(18,158,146,0.5)]">
+            <span className="text-black font-black text-xl">K</span>
           </div>
-
-          {/* CTA button */}
-          <a
-            href="#kontak"
-            className="hidden md:inline-flex items-center gap-1.5 font-bold text-sm transition-all"
-            style={{
-              padding: "10px 24px",
-              borderRadius: 999,
-              color: "#fff",
-              border: "1.5px solid rgba(25,171,205,0.4)",
-              background: "rgba(25,171,205,0.1)",
-              transition: "all 0.3s ease",
-            }}
-            onMouseEnter={e => {
-              e.currentTarget.style.background = "rgba(25,171,205,0.2)";
-              e.currentTarget.style.borderColor = "#19ABCD";
-              e.currentTarget.style.boxShadow = "0 0 20px rgba(25,171,205,0.3)";
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.background = "rgba(25,171,205,0.1)";
-              e.currentTarget.style.borderColor = "rgba(25,171,205,0.4)";
-              e.currentTarget.style.boxShadow = "none";
-            }}
-          >
-            Konsultasi Gratis
-            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>arrow_forward</span>
-          </a>
-
-          {/* Mobile burger */}
-          <button
-            className="md:hidden text-white p-2"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            aria-label="Toggle menu"
-          >
-            <span className="material-symbols-outlined text-3xl">
-              {isMenuOpen ? "close" : "menu"}
-            </span>
-          </button>
+          <span className="text-2xl font-bold text-white tracking-tighter">
+            Kee<span className="text-[#129E92]">Tech</span>
+          </span>
         </div>
-      </nav>
 
-      {/* Mobile menu */}
-      {isMenuOpen && (
-        <motion.div
-          initial={{ opacity: 0, y: -16 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="fixed left-0 w-full z-40 md:hidden flex flex-col"
-          style={{
-            top: NAV_H,
-            minHeight: `calc(100vh - ${NAV_H}px)`,
-            background: "rgba(10,14,26,0.97)",
-            backdropFilter: "blur(16px)",
-            padding: "32px 24px 48px",
-            borderTop: "1px solid rgba(25,171,205,0.1)",
-          }}
-        >
-          <div className="flex flex-col gap-1 mb-10">
-            {links.map(({ label, hash }) => (
-              <a
-                key={hash}
-                href={hash}
-                className="text-xl font-bold text-white py-4 border-b"
-                style={{ borderColor: "rgba(255,255,255,0.06)" }}
-                onClick={() => { setIsMenuOpen(false); setActiveHash(hash); }}
-              >
-                {label}
-              </a>
-            ))}
-          </div>
-          <a
-            href="#kontak"
-            className="text-center font-bold text-base py-4 rounded-2xl"
-            style={{
-              color: "#fff",
-              border: "1.5px solid rgba(25,171,205,0.4)",
-              background: "rgba(25,171,205,0.1)",
-            }}
-            onClick={() => setIsMenuOpen(false)}
-          >
-            Konsultasi Gratis
-          </a>
-        </motion.div>
-      )}
-    </>
+        <div className="hidden md:flex items-center gap-8">
+          {links.map((link) => (
+            <a key={link.name} href={link.href} className="text-sm font-medium text-gray-300 hover:text-[#00BFFF] transition-colors uppercase tracking-widest">
+              {link.name}
+            </a>
+          ))}
+        </div>
+
+        <a href="#kontak" className="hidden md:block px-6 py-2.5 rounded-full text-xs font-bold text-black bg-gradient-to-r from-[#00BFFF] to-[#32CD32] hover:shadow-[0_0_20px_rgba(0,191,255,0.4)] transition-all">
+          KONSULTASI GRATIS
+        </a>
+      </div>
+    </nav>
   );
 }
