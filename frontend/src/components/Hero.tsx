@@ -473,8 +473,7 @@ export default function Hero({ initialData }: { initialData?: any }) {
             >
               {hero.hero_description}
             </motion.p>
-
-            <motion.div variants={fadeUp} className="mb-5 flex flex-wrap items-center gap-3">
+            <motion.div variants={fadeUp} className="mb-5 flex flex-col gap-3">
               <a
                 href={hero.hero_cta_primary_link}
                 className="inline-flex items-center gap-2 font-bold"
@@ -492,6 +491,23 @@ export default function Hero({ initialData }: { initialData?: any }) {
                   arrow_forward
                 </span>
               </a>
+              <a
+                href={hero.hero_cta_secondary_link}
+                className="inline-flex items-center gap-2 font-bold"
+                style={{
+                  padding: "12px 24px",
+                  borderRadius: 10,
+                  fontSize: "0.875rem",
+                  color: "rgba(255,255,255,0.7)",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                }}
+              >
+                {hero.hero_cta_secondary_text}
+                <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                  east
+                </span>
+              </a>
+            </motion.div>
               <a
                 href={hero.hero_cta_secondary_link}
                 className="inline-flex items-center font-semibold"
