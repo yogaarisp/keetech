@@ -508,21 +508,6 @@ export default function Hero({ initialData }: { initialData?: any }) {
                 </span>
               </a>
             </motion.div>
-              <a
-                href={hero.hero_cta_secondary_link}
-                className="inline-flex items-center font-semibold"
-                style={{
-                  padding: "12px 24px",
-                  borderRadius: 10,
-                  fontSize: "0.875rem",
-                  color: "#fff",
-                  border: "1.5px solid rgba(255,255,255,0.2)",
-                  background: "rgba(0,0,0,0.5)",
-                }}
-              >
-                {hero.hero_cta_secondary_text}
-              </a>
-            </motion.div>
 
             <motion.div
               variants={fadeUp}
