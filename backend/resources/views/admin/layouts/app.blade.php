@@ -271,6 +271,10 @@
             to   { opacity: 1; transform: translateX(0); }
         }
 
+        @keyframes spin { 
+            to { transform: rotate(360deg); } 
+        }
+
         /* ── DELETE MODAL ── */
         .modal-backdrop {
             position: fixed; inset: 0; z-index: 200;
@@ -339,9 +343,18 @@
 
         @media (max-width: 1023px) {
             #sidebar { transform: translateX(-100%); }
-            #sidebar.open { transform: translateX(0); }
-            #sidebarOverlay.show { display: block; }
-            .sidebar-spacer { display: none; }
+            #sidebar.open { transform: translateX(0) !important; }
+            #sidebarOverlay.show { display: block !important; }
+            .sidebar-spacer { display: none !important; }
+        }
+
+        /* ── UTILITY FALLBACKS ── */
+        .hidden { display: none !important; }
+        @media (min-width: 640px) {
+            .sm\:block { display: block !important; }
+        }
+        @media (min-width: 1024px) {
+            .lg\:hidden { display: none !important; }
         }
 
         /* ── PROFILE DROPDOWN ── */
@@ -533,6 +546,9 @@
             </div>
         </aside>
 
+        <!-- Spacer to push main content to the right of fixed sidebar -->
+        <div class="sidebar-spacer"></div>
+
         <!-- ─── MAIN AREA ─── -->
         <div class="main-area">
             <!-- TOPBAR -->
@@ -715,8 +731,6 @@
                 }, 4000);
             });
         });
-
-        @keyframes spin { to { transform: rotate(360deg); } }
     </script>
 </body>
 
