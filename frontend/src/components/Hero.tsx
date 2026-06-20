@@ -473,7 +473,7 @@ export default function Hero({ initialData }: { initialData?: any }) {
             >
               {hero.hero_description}
             </motion.p>
-            <motion.div variants={fadeUp} className="mb-5 flex flex-col sm:flex-row gap-3">
+            <motion.div variants={fadeUp} className="mb-5 flex flex-row gap-3">
               <a
                 href={hero.hero_cta_primary_link}
                 className="inline-flex items-center justify-center gap-2 font-bold"
