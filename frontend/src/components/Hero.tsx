@@ -173,7 +173,7 @@ export default function Hero({ initialData }: { initialData?: any }) {
     initialData?.general?.company_logo
       ? (initialData.general.company_logo.startsWith("http")
           ? initialData.general.company_logo
-          : `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/storage/${initialData.general.company_logo}`)
+          : `${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000"}/storage/${initialData.general.company_logo}`)
       : null
   );
   const [scrolled, setScrolled] = useState(false);
@@ -199,7 +199,7 @@ export default function Hero({ initialData }: { initialData?: any }) {
           if (s?.general?.company_name) setCompanyName(s.general.company_name);
           if (s?.general?.company_logo) {
             const logo = s.general.company_logo;
-            setCompanyLogo(logo.startsWith("http") ? logo : `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/storage/${logo}`);
+            setCompanyLogo(logo.startsWith("http") ? logo : `${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000"}/storage/${logo}`);
           }
         } catch { }
       })();
