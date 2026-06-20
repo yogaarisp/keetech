@@ -104,6 +104,7 @@ function HeroBackground({ imageSrc }: { imageSrc: string }) {
           <img
             src={imageSrc}
             alt=""
+            fetchPriority="high"
             className="absolute top-1/2 -translate-y-1/2 select-none object-contain object-right
               right-[-4%] h-[72%] w-auto min-w-[95%] max-w-none opacity-70
               sm:right-0 sm:h-[80%] sm:min-w-[80%] sm:opacity-85
@@ -272,7 +273,7 @@ export default function Hero({ initialData }: { initialData?: any }) {
                     transition: "all 0.35s ease",
                   }}
                 >
-                  <img src={companyLogo} alt={companyName} className="w-full h-full object-contain" />
+                  <img src={companyLogo} alt={companyName} className="w-full h-full object-contain" fetchPriority="high" />
                 </div>
               ) : (
                 <div
