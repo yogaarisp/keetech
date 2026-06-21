@@ -22,10 +22,10 @@ const stagger: Variants = {
 };
 
 const defaultHero = {
-  hero_badge: "IT SERVICE & SOFTWARE DEVELOPER PROFESIONAL",
+  hero_badge: "✦ IT SERVICE & SOFTWARE DEVELOPER PROFESIONAL ✦",
   hero_title: "Solusi Digital<br/><span>Terpadu</span><br/>untuk Bisnis Anda",
   hero_description:
-    "Kami menyediakan layanan IT lengkap ΓÇö mulai dari perbaikan hardware, infrastruktur jaringan, hingga pengembangan software dan pengadaan perangkat IT.",
+    "Kami menyediakan layanan IT lengkap — mulai dari perbaikan hardware, infrastruktur jaringan, hingga pengembangan software dan pengadaan perangkat IT.",
   hero_image:
     "https://keetech.my.id/storage/settings/o3TGJ3jMXm1q39V267yDKHcYp5XrWISqvqWPCJ4L.png",
   hero_cta_primary_text: "Konsultasi Gratis",
