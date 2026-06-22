@@ -8,6 +8,8 @@ import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import { getSettings, getServices, getPortfolios, getTestimonials } from "@/lib/api";
 
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSettings();
   const companyName = settings?.general?.company_name || "KeeTech";
